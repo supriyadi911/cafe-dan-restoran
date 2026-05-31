@@ -1181,7 +1181,14 @@
 
     <script>
         // --- 1. DEFAULT DATA & 50 DATA MENU DAMAI ---
-        const defaultSettings = { name: "CafePOS Premium", address: "Jl. Sudirman No.45, Jakarta", tax: 11, service: 5, logoUrl: "", gasUrl: "" };
+        const defaultSettings = { 
+            name: "CafePOS Premium", 
+            address: "Jl. Sudirman No.45, Jakarta", 
+            tax: 11, 
+            service: 5, 
+            logoUrl: "", 
+            gasUrl: "https://script.google.com/macros/s/AKfycby2tw5G9B3KFVLBKozeGBMcLrmEWP-twwMrV0KoqBMSViH6MNKZsgKQ0IxKEyFwYTlO/exec" 
+        };
         
         // Pembuatan 50 Data Menu Secara Terstruktur
         const defaultMenus = [
@@ -1319,6 +1326,13 @@
                     needsSave = true;
                 }
             });
+
+            // Otomatis terapkan URL GAS Default jika di penyimpanan lokal sebelumnya masih kosong
+            if (!appData.settings.gasUrl) {
+                appData.settings.gasUrl = defaultSettings.gasUrl;
+                needsSave = true;
+            }
+
             if(needsSave) saveData(true); // local only during init
 
             // Sinkronisasi dengan Cloud (Google Apps Script) jika URL tersedia
