@@ -258,7 +258,7 @@
         .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); font-weight: bold; box-shadow: 0 4px 10px rgba(74, 59, 50, 0.3); }
         .dark-mode .filter-btn.active { background: var(--secondary); color: var(--dark); border-color: var(--secondary); box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3); }
         
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 18px; overflow-y: auto; padding-bottom: 15px; align-content: start; flex: 1; min-height: 0; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 15px; overflow-y: auto; padding-bottom: 15px; align-content: start; flex: 1; min-height: 0; }
         
         /* Mengunci Grid Menu Kasir menjadi 3 Kolom */
         #view-pos .menu-grid { grid-template-columns: repeat(3, 1fr); }
@@ -325,13 +325,111 @@
         @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 15px; }
         .close-btn { background: transparent; border: none; font-size: 20px; cursor: pointer; color: var(--text-light); }
-        
-        /* Payment Grid */
-        .payment-methods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
-        .pay-method { border: 1px solid var(--border); padding: 15px 10px; text-align: center; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-        .pay-method i { font-size: 24px; margin-bottom: 5px; color: var(--primary); }
-        .dark-mode .pay-method i { color: var(--secondary); }
-        .pay-method.active { border-color: var(--secondary); background: rgba(212, 175, 55, 0.1); }
+
+        /* Sync Indicator */
+        #sync-indicator { font-size: 11px; padding: 4px 10px; border-radius: 12px; background: rgba(0,0,0,0.05); font-weight: bold; }
+        .dark-mode #sync-indicator { background: rgba(255,255,255,0.1); }
+        .sync-active { color: var(--info); animation: pulse 1.5s infinite; }
+        .sync-error { color: var(--danger); }
+        .sync-success { color: var(--success); }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+        /* --- STYLES KHUSUS MODE PELANGGAN --- */
+        /* Sticky segmented control tanpa spasi */
+        .cust-sticky-bar {
+            position: sticky;
+            top: 0;
+            background: var(--light);
+            z-index: 100;
+            padding: 15px 10px;
+            margin: 0 -20px;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+        .dark-mode .cust-sticky-bar {
+            background: #121212;
+        }
+        .segmented-control {
+            display: inline-flex;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1.5px solid var(--primary);
+            background: var(--surface);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            flex-shrink: 0;
+        }
+        .dark-mode .segmented-control {
+            border-color: var(--secondary);
+        }
+        .segmented-control .filter-btn {
+            border: none;
+            border-radius: 0;
+            margin: 0;
+            padding: 10px 24px;
+            background: transparent;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+            border-right: 1px solid var(--border);
+            box-shadow: none;
+        }
+        .segmented-control .filter-btn:last-child {
+            border-right: none;
+        }
+        .segmented-control .filter-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        .dark-mode .segmented-control .filter-btn.active {
+            background: var(--secondary);
+            color: var(--dark);
+        }
+
+        /* Ukuran menu card lebih kecil di sisi pelanggan */
+        #cust-menu-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        #cust-menu-grid .menu-card {
+            height: 195px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        #cust-menu-grid .menu-img {
+            height: 110px;
+        }
+        #cust-menu-grid .menu-details {
+            padding: 8px 10px;
+        }
+        #cust-menu-grid .menu-title {
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.25;
+            margin-bottom: 2px;
+        }
+        #cust-menu-grid .menu-price {
+            font-size: 11px;
+        }
+        #cust-menu-grid .add-icon {
+            width: 26px;
+            height: 26px;
+            bottom: 8px;
+            right: 8px;
+            font-size: 11px;
+        }
+
+        /* Efek Zoom Animasi pada Modal Detail */
+        @keyframes imageZoom {
+            from { transform: scale(1.1); opacity: 0.8; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        #cust-detail-img {
+            animation: imageZoom 0.45s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
 
         /* Customer Mode & Active Orders */
         body.customer-mode .sidebar, body.customer-mode .topbar { display: none !important; }
@@ -468,6 +566,22 @@
             .cart-customer-info { padding: 10px; grid-template-columns: 1fr; gap: 8px; }
             .cart-items { flex: 1; overflow-y: auto; padding: 10px; max-height: none; min-height: 0; }
             .cart-header { padding: 10px 15px; }
+
+            /* Khusus Mode Pelanggan di HP */
+            #cust-menu-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 10px !important;
+            }
+            #cust-menu-grid .menu-card {
+                height: 180px !important;
+            }
+            #cust-menu-grid .menu-img {
+                height: 95px !important;
+            }
+            .segmented-control .filter-btn {
+                padding: 10px 14px;
+                font-size: 12px;
+            }
             
             /* Other Views Adjustment */
             .charts-container { grid-template-columns: 1fr; }
@@ -519,6 +633,7 @@
                 <h2 id="page-title" style="margin:0;">Kasir Pemesanan</h2>
             </div>
             <div class="flex gap-2 align-center">
+                <span id="sync-indicator" title="Status Cloud Sinkronisasi"><i class="fas fa-cloud"></i> Lokal</span>
                 <span id="current-time" class="bold"></span>
                 <button class="btn btn-icon btn-outline" onclick="toggleTheme()" title="Ganti Tema">
                     <i class="fas fa-moon" id="theme-icon"></i>
@@ -554,52 +669,60 @@
                         <h3><i class="fas fa-shopping-cart"></i> Keranjang Pesanan</h3>
                     </div>
                     
-                    <div class="cart-customer-info">
-                        <input type="text" id="cust-name" placeholder="Nama Pelanggan">
-                        <select id="cust-table">
-                            <option value="">Pilih Meja</option>
-                            <!-- Populated by JS -->
-                        </select>
-                        <input type="text" id="cust-notes" placeholder="Catatan (Opsional)" style="grid-column: span 2;">
-                    </div>
-                    
-                    <div class="cart-items" id="cart-items">
-                        <!-- Populated by JS -->
-                        <div style="text-align:center; color: var(--text-light); margin-top: 30px;">
-                            <i class="fas fa-basket-shopping" style="font-size: 40px; margin-bottom: 10px; opacity: 0.3;"></i>
-                            <p style="font-size: 13px;">Belum ada pesanan</p>
-                        </div>
-                    </div>
-
-                    <div class="cart-summary-wrapper">
-                        <div class="cart-summary">
-                            <div class="summary-row">
-                                <span>Subtotal</span>
-                                <span id="summary-subtotal">Rp 0</span>
+                    <div class="cart-row-layout">
+                        <!-- Left Panel inside Cart: Info & Items -->
+                        <div class="cart-col-left">
+                            <div class="cart-customer-info">
+                                <input type="text" id="cust-name" placeholder="Nama Pelanggan">
+                                <select id="cust-table">
+                                    <option value="">Pilih Meja</option>
+                                    <!-- Populated by JS -->
+                                </select>
+                                <input type="text" id="cust-notes" placeholder="Catatan (Opsional)" style="grid-column: span 2;">
                             </div>
-                            <div class="summary-row">
-                                <span>PPN (<span id="tax-rate-display">11</span>%)</span>
-                                <span id="summary-tax">Rp 0</span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Service (<span id="service-rate-display">5</span>%)</span>
-                                <span id="summary-service">Rp 0</span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Diskon</span>
-                                <div style="width: 120px;">
-                                    <input type="number" id="input-discount" value="0" style="padding: 6px; height: 30px; text-align: right; border-radius: 6px; border: 1px solid var(--border);" onchange="updateCart()">
+                            
+                            <div class="cart-items" id="cart-items">
+                                <!-- Populated by JS -->
+                                <div style="text-align:center; color: var(--text-light); margin-top: 30px;">
+                                    <i class="fas fa-basket-shopping" style="font-size: 40px; margin-bottom: 10px; opacity: 0.3;"></i>
+                                    <p style="font-size: 13px;">Belum ada pesanan</p>
                                 </div>
                             </div>
-                            <div class="summary-total">
-                                <span>Total Bayar</span>
-                                <span id="summary-total">Rp 0</span>
-                            </div>
                         </div>
-                        
-                        <div class="cart-actions">
-                            <button class="btn btn-danger" onclick="clearCart()">Batal</button>
-                            <button class="btn btn-primary" onclick="showPaymentModal()">Bayar & Cetak</button>
+
+                        <!-- Right Panel inside Cart: Summary & Actions -->
+                        <div class="cart-col-right">
+                            <div class="cart-summary-wrapper">
+                                <div class="cart-summary">
+                                    <div class="summary-row">
+                                        <span>Subtotal</span>
+                                        <span id="summary-subtotal">Rp 0</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span>PPN (<span id="tax-rate-display">11</span>%)</span>
+                                        <span id="summary-tax">Rp 0</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span>Service (<span id="service-rate-display">5</span>%)</span>
+                                        <span id="summary-service">Rp 0</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span>Diskon</span>
+                                        <div style="width: 120px;">
+                                            <input type="number" id="input-discount" value="0" style="padding: 6px; height: 30px; text-align: right; border-radius: 6px; border: 1px solid var(--border);" onchange="updateCart()">
+                                        </div>
+                                    </div>
+                                    <div class="summary-total">
+                                        <span>Total Bayar</span>
+                                        <span id="summary-total">Rp 0</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="cart-actions">
+                                    <button class="btn btn-danger" onclick="clearCart()">Batal</button>
+                                    <button class="btn btn-primary" onclick="showPaymentModal()">Bayar & Cetak</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -755,8 +878,8 @@
                 <p>Pilih menu favoritmu dan pesan langsung dari meja!</p>
             </div>
             <div style="padding: 20px; max-width: 1000px; margin: 0 auto;">
-                <div class="menu-controls">
-                    <div class="menu-filter" id="cust-category-filters" style="justify-content: center; flex-wrap: wrap;">
+                <div class="cust-sticky-bar">
+                    <div class="segmented-control" id="cust-category-filters">
                         <!-- Populated by JS -->
                     </div>
                 </div>
@@ -776,6 +899,10 @@
             <div class="chart-card" style="max-width: 600px; margin: 0 auto;">
                 <h3>Pengaturan Aplikasi</h3>
                 <div class="flex-col gap-1" style="margin-top: 15px;">
+                    <label>URL Aplikasi Web (Google Apps Script)</label>
+                    <input type="text" id="set-gas-url" placeholder="https://script.google.com/macros/s/.../exec">
+                    <small style="color: var(--text-light); margin-bottom: 10px;">*Isi dengan URL Deploy jika Anda menggunakan Cloud Database. Kosongkan untuk mode lokal.</small>
+
                     <label>URL Logo Cafe/Restoran (Opsional)</label>
                     <input type="text" id="set-logo" placeholder="https://...">
                     
@@ -920,6 +1047,25 @@
         </div>
     </div>
 
+    <!-- MODAL: DETAIL MENU UTK PELANGGAN (DENGAN EFEK ZOOM) -->
+    <div class="modal-overlay" id="modal-cust-detail">
+        <div class="modal" style="max-width: 380px; padding: 0; overflow: hidden; border-radius: 16px;">
+            <div style="position: relative; overflow: hidden; background: #000; height: 240px;">
+                <button class="close-btn" onclick="closeModal('modal-cust-detail')" style="position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; z-index: 10; border: none; cursor: pointer;"><i class="fas fa-times"></i></button>
+                <img id="cust-detail-img" src="" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+            <div style="padding: 20px;" class="flex-col gap-1">
+                <span id="cust-detail-badge" class="badge" style="width: fit-content; display: none;"></span>
+                <h2 id="cust-detail-title" style="margin: 5px 0 0 0; font-size: 20px; color: var(--text-main);">Nama Menu</h2>
+                <h3 id="cust-detail-price" class="text-gold" style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">Rp 0</h3>
+                <p id="cust-detail-stock" style="font-size: 12px; color: var(--text-light); margin-bottom: 15px;">Stok Tersedia: 0</p>
+                <button class="btn btn-secondary" id="btn-cust-detail-add" style="width: 100%; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 10px;">
+                    <i class="fas fa-cart-plus"></i> Tambah ke Keranjang
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: CUSTOMER CART & CHECKOUT -->
     <div class="modal-overlay" id="modal-customer-cart">
         <div class="modal">
@@ -1035,7 +1181,7 @@
 
     <script>
         // --- 1. DEFAULT DATA & 50 DATA MENU DAMAI ---
-        const defaultSettings = { name: "CafePOS Premium", address: "Jl. Sudirman No.45, Jakarta", tax: 11, service: 5, logoUrl: "" };
+        const defaultSettings = { name: "CafePOS Premium", address: "Jl. Sudirman No.45, Jakarta", tax: 11, service: 5, logoUrl: "", gasUrl: "" };
         
         // Pembuatan 50 Data Menu Secara Terstruktur
         const defaultMenus = [
@@ -1112,9 +1258,47 @@
         let currentCustFilter = 'All';
         let selectedPayment = 'Tunai';
         let filteredTransactions = []; // Menyimpan riwayat yang sudah di filter
+        let isSyncing = false; // Flag status cloud sync
+
+        // Web Audio API Ding-Ding Sound Generator
+        function playChimeNotification() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Bunyi pertama (Nada C5)
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                gain1.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                osc1.start();
+                osc1.stop(audioCtx.currentTime + 0.4);
+
+                // Bunyi kedua (Nada E5, jeda 150ms)
+                setTimeout(() => {
+                    const osc2 = audioCtx.createOscillator();
+                    const gain2 = audioCtx.createGain();
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(659.25, audioCtx.currentTime);
+                    gain2.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                    
+                    osc2.connect(gain2);
+                    gain2.connect(audioCtx.destination);
+                    osc2.start();
+                    osc2.stop(audioCtx.currentTime + 0.5);
+                }, 150);
+            } catch(e) {
+                console.log("Web Audio API blocked or not supported:", e);
+            }
+        }
 
         // --- 2. INITIALIZATION ---
-        window.onload = () => {
+        window.onload = async () => {
             updateClock();
             setInterval(updateClock, 1000);
             
@@ -1124,19 +1308,23 @@
             // Perbarui menu jika versi localStorage masih yang lama (8 item) agar mendapat 50 item.
             if(appData.menus.length < 50) {
                 appData.menus = defaultMenus;
-                saveData();
+                saveData(true); // local only save during init
             }
 
-            // Migrasi: Pastikan semua menu memiliki properti isBestSeller jika sebelumnya belum ada
+            // Migrasi: Pastikan semua menu memiliki properti isBestSeller
             let needsSave = false;
             appData.menus.forEach(m => {
                 if(typeof m.isBestSeller === 'undefined') {
-                    // Set beberapa menu populer sebagai default Best Seller
                     m.isBestSeller = (m.id === 8 || m.id === 21 || m.id === 31 || m.id === 1); 
                     needsSave = true;
                 }
             });
-            if(needsSave) saveData();
+            if(needsSave) saveData(true); // local only during init
+
+            // Sinkronisasi dengan Cloud (Google Apps Script) jika URL tersedia
+            if (appData.settings.gasUrl) {
+                await loadDataFromCloud(appData.settings.gasUrl);
+            }
 
             // Populate UI
             initSettingsUI();
@@ -1152,12 +1340,87 @@
             enterCustomerMode(true);
         };
 
-        function saveData() {
+        function updateSyncUI(status, styleClass) {
+            const el = document.getElementById('sync-indicator');
+            if(el) {
+                el.innerHTML = `<i class="fas fa-cloud"></i> ${status}`;
+                el.className = styleClass;
+            }
+        }
+
+        // --- FUNGSI CLOUD SINKRONISASI (GOOGLE APPS SCRIPT) ---
+        async function syncToCloud() {
+            const gasUrl = appData.settings.gasUrl;
+            if (!gasUrl || isSyncing) return;
+
+            isSyncing = true;
+            updateSyncUI('Syncing...', 'sync-active');
+
+            try {
+                const response = await fetch(gasUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'save', data: appData })
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    updateSyncUI('Online / Tersinkronisasi', 'sync-success');
+                } else {
+                    updateSyncUI('Gagal Sync Cloud', 'sync-error');
+                    console.error("GAS Error:", result.message);
+                }
+            } catch (e) {
+                updateSyncUI('Offline / Gagal Jaringan', 'sync-error');
+                console.error("Network Error:", e);
+            } finally {
+                isSyncing = false;
+            }
+        }
+
+        async function loadDataFromCloud(gasUrl) {
+            updateSyncUI('Memuat Cloud...', 'sync-active');
+            try {
+                const response = await fetch(gasUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'load' })
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success' && result.data) {
+                    // Update Local State dengan data dari Cloud
+                    appData = result.data;
+                    
+                    // Cadangkan ke local storage
+                    localStorage.setItem('pos_settings', JSON.stringify(appData.settings));
+                    localStorage.setItem('pos_menus', JSON.stringify(appData.menus));
+                    localStorage.setItem('pos_tables', JSON.stringify(appData.tables));
+                    localStorage.setItem('pos_transactions', JSON.stringify(appData.transactions));
+                    localStorage.setItem('pos_active_orders', JSON.stringify(appData.activeOrders));
+
+                    updateSyncUI('Online / Tersinkronisasi', 'sync-success');
+                } else {
+                    updateSyncUI('Gagal Load Cloud', 'sync-error');
+                }
+            } catch (e) {
+                updateSyncUI('Offline (Data Lokal)', 'sync-error');
+            }
+        }
+
+        // --- OVERRIDE SAVEDATA UNTUK AUTO-SYNC CLOUD ---
+        function saveData(localOnly = false) {
+            // Selalu simpan ke localStorage sebagai offline-first backup
             localStorage.setItem('pos_settings', JSON.stringify(appData.settings));
             localStorage.setItem('pos_menus', JSON.stringify(appData.menus));
             localStorage.setItem('pos_tables', JSON.stringify(appData.tables));
             localStorage.setItem('pos_transactions', JSON.stringify(appData.transactions));
             localStorage.setItem('pos_active_orders', JSON.stringify(appData.activeOrders));
+
+            // Picu background sync ke Cloud Spreadsheet jika tidak diminta mode localOnly
+            if(!localOnly) {
+                syncToCloud();
+            }
         }
 
         // --- 3. UI HELPERS ---
@@ -1865,6 +2128,7 @@
 
         // --- 10. SETTINGS ---
         function initSettingsUI() {
+            document.getElementById('set-gas-url').value = appData.settings.gasUrl || '';
             document.getElementById('set-logo').value = appData.settings.logoUrl || '';
             document.getElementById('set-name').value = appData.settings.name;
             document.getElementById('set-address').value = appData.settings.address;
@@ -1897,6 +2161,7 @@
         }
 
         function saveSettings() {
+            appData.settings.gasUrl = document.getElementById('set-gas-url').value.trim();
             appData.settings.logoUrl = document.getElementById('set-logo').value.trim();
             appData.settings.name = document.getElementById('set-name').value;
             appData.settings.address = document.getElementById('set-address').value;
@@ -1981,17 +2246,63 @@
             container.innerHTML = filtered.map(m => {
                 const isHabis = m.stock <= 0;
                 return `
-                <div class="menu-card" ${isHabis ? '' : `onclick="addToCustomerCart(${m.id})"`} style="${isHabis ? 'opacity: 0.6; filter: grayscale(80%); cursor: not-allowed;' : ''}">
-                    ${isHabis ? '<div style="position: absolute; top: 10px; right: 10px; background: var(--danger); color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; z-index: 10;">STOK HABIS</div>' : ''}
-                    ${m.isBestSeller ? '<div style="position: absolute; top: 10px; left: 10px; background: var(--secondary); color: var(--dark); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"><i class="fas fa-star"></i> BEST SELLER</div>' : ''}
+                <div class="menu-card" onclick="showCustomerDetailMenu(${m.id})" style="${isHabis ? 'opacity: 0.6; filter: grayscale(80%); cursor: not-allowed;' : ''}">
+                    ${isHabis ? '<div style="position: absolute; top: 10px; right: 10px; background: var(--danger); color: white; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; z-index: 10;">STOK HABIS</div>' : ''}
+                    ${m.isBestSeller ? '<div style="position: absolute; top: 10px; left: 10px; background: var(--secondary); color: var(--dark); padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"><i class="fas fa-star"></i> BEST SELLER</div>' : ''}
                     <img src="${m.image || 'https://via.placeholder.com/150'}" class="menu-img" alt="${m.name}">
                     <div class="menu-details">
                         <div class="menu-title">${m.name}</div>
                         <div class="menu-price">${formatRp(m.price)}</div>
                     </div>
-                    ${isHabis ? '' : '<div class="add-icon"><i class="fas fa-plus"></i></div>'}
+                    ${isHabis ? '' : '<div class="add-icon"><i class="fas fa-search-plus"></i></div>'}
                 </div>
             `}).join('');
+        }
+
+        function showCustomerDetailMenu(id) {
+            const m = appData.menus.find(x => x.id === id);
+            if (!m) return;
+
+            const isHabis = m.stock <= 0;
+
+            // Reset image src & trigger animation re-run
+            const detailImg = document.getElementById('cust-detail-img');
+            detailImg.style.animation = 'none';
+            detailImg.offsetHeight; /* Trigger reflow */
+            detailImg.style.animation = null;
+
+            detailImg.src = m.image || 'https://via.placeholder.com/150';
+            document.getElementById('cust-detail-title').innerText = m.name;
+            document.getElementById('cust-detail-price').innerText = formatRp(m.price);
+            document.getElementById('cust-detail-stock').innerText = `Stok Tersedia: ${m.stock}`;
+
+            const badge = document.getElementById('cust-detail-badge');
+            if (m.isBestSeller) {
+                badge.style.display = 'inline-block';
+                badge.className = 'badge badge-warning';
+                badge.innerHTML = '<i class="fas fa-star"></i> BEST SELLER';
+            } else {
+                badge.style.display = 'none';
+            }
+
+            const addButton = document.getElementById('btn-cust-detail-add');
+            if (isHabis) {
+                addButton.disabled = true;
+                addButton.innerHTML = 'Stok Habis';
+                addButton.style.background = 'var(--text-light)';
+                addButton.style.color = '#fff';
+            } else {
+                addButton.disabled = false;
+                addButton.innerHTML = '<i class="fas fa-cart-plus"></i> Tambah ke Keranjang';
+                addButton.style.background = 'var(--secondary)';
+                addButton.style.color = 'var(--dark)';
+                addButton.onclick = () => {
+                    addToCustomerCart(m.id);
+                    closeModal('modal-cust-detail');
+                };
+            }
+
+            showModal('modal-cust-detail');
         }
 
         function addToCustomerCart(id) {
@@ -2088,6 +2399,9 @@
             if(t) t.status = 'Terisi';
 
             saveData();
+            
+            // Putar bunyi Chime/Bel Notification ke sistem kasir
+            playChimeNotification();
             
             alert(`Terima kasih ${name}!\nPesanan Anda berhasil dikirim ke dapur. Kasir akan mendatangi meja Anda untuk proses pembayaran.`);
             
