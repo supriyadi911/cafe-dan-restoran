@@ -246,7 +246,7 @@
             flex-direction: column; 
             border: 1px solid var(--border); 
             overflow: hidden; 
-            height: 100%;
+            height: 100%; /* Mengunci tinggi 100% dari container POS */
             flex-shrink: 0; /* Mencegah keranjang menyusut dan tertutup oleh menu */
         }
         
@@ -284,7 +284,8 @@
         .cart-customer-info input, .cart-customer-info select { background: var(--surface); padding: 8px 12px; border-radius: 6px; font-size: 13px; border-color: rgba(0,0,0,0.1); }
         .dark-mode .cart-customer-info input, .dark-mode .cart-customer-info select { border-color: rgba(255,255,255,0.1); }
         
-        .cart-items { flex: 1; overflow-y: auto; padding: 15px; min-height: 0; }
+        /* Modifikasi .cart-items agar maksimal 3 baris dan bisa di-scroll vertikal */
+        .cart-items { overflow-y: auto; padding: 15px; max-height: 220px; flex-shrink: 0; }
         .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px dashed var(--border); padding-bottom: 12px; transition: all 0.2s; }
         .cart-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .cart-item-info { flex: 1; }
@@ -333,6 +334,13 @@
         .sync-error { color: var(--danger); }
         .sync-success { color: var(--success); }
         @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+        /* Theme Settings */
+        .color-preset { width: 35px; height: 35px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .color-preset:hover { transform: scale(1.1); border-color: var(--secondary); }
+        input[type="color"] { -webkit-appearance: none; border: none; width: 40px; height: 40px; border-radius: 8px; cursor: pointer; padding: 0; background: none; }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
         /* --- STYLES KHUSUS MODE PELANGGAN --- */
         /* Sticky segmented control tanpa spasi */
@@ -474,9 +482,15 @@
         /* --- RESPONSIVE UNTUK TABLET --- */
         @media (max-width: 1024px) {
             .pos-container { flex-direction: column; overflow-y: hidden; }
-            .menu-area { flex: 1.5; }
-            .cart-area { width: 100%; flex: 1; flex-shrink: 0; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
-            .cart-row-layout { flex-direction: row; }
+            .menu-area { flex: 1.2; min-height: 0; }
+            
+            /* Mengunci tinggi total keranjang di tablet landscape/portrait agar tidak berantakan */
+            .cart-area { width: 100%; flex: 1; display: flex; flex-direction: column; min-height: 0; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
+            .cart-row-layout { flex-direction: row; flex: 1; min-height: 0; }
+            .cart-col-left { flex: 1.5; display: flex; flex-direction: column; min-height: 0; border-bottom: none; border-right: 1px solid var(--border); }
+            .cart-col-right { flex: 1; display: flex; flex-direction: column; background: var(--light); padding: 15px 20px; overflow-y: auto; }
+            .cart-items { flex: 1; overflow-y: auto; min-height: 0; }
+            
             #view-pos.active { height: calc(100vh - 70px); overflow: hidden; }
             #view-pos .menu-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
         }
@@ -547,7 +561,7 @@
                 overflow: hidden; 
             }
             .pos-container { flex-direction: column; gap: 10px; flex: 1; height: 100%; overflow: hidden; }
-            .menu-area { flex: 1; min-height: 0; }
+            .menu-area { flex: 1.2; min-height: 0; }
             .cart-area { flex: 1; width: 100%; min-height: 0; height: auto; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); border-radius: 12px; }
             
             /* Tampilan Grid Menu menjadi 2 Kolom di Handphone */
@@ -833,7 +847,10 @@
                     <button class="btn btn-outline" onclick="setQuickDateFilter('year')">Tahun Ini</button>
                     <button class="btn btn-outline" onclick="setQuickDateFilter('all')">Semua</button>
                 </div>
-                <button class="btn btn-secondary" onclick="printReport()"><i class="fas fa-print"></i> Cetak Laporan</button>
+                <div class="flex gap-1">
+                    <button class="btn btn-danger" onclick="deleteSelectedHistory()" id="btn-bulk-delete" style="display: none;"><i class="fas fa-trash"></i> Hapus Terpilih</button>
+                    <button class="btn btn-secondary" onclick="printReport()"><i class="fas fa-print"></i> Cetak Laporan</button>
+                </div>
             </div>
             
             <div style="margin-bottom: 15px; font-weight: bold; color: var(--primary);">
@@ -843,6 +860,7 @@
             <table class="data-table">
                 <thead>
                     <tr>
+                        <th style="width: 40px;"><input type="checkbox" id="cb-all-history" onclick="toggleAllHistory(this)"></th>
                         <th>No Transaksi</th>
                         <th>Waktu</th>
                         <th>Pelanggan</th>
@@ -862,7 +880,7 @@
         <section id="view-active-orders" class="view-section">
             <div class="flex justify-between align-center" style="margin-bottom: 20px;">
                 <p>Pesanan yang masuk dari pelanggan (Mode Pelanggan).</p>
-                <button class="btn btn-outline" onclick="renderActiveOrders()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                <button class="btn btn-outline" id="btn-refresh-orders" onclick="refreshActiveOrders()"><i class="fas fa-sync-alt"></i> Refresh</button>
             </div>
             <div class="menu-grid" id="active-orders-grid">
                 <!-- Populated by JS -->
@@ -896,6 +914,30 @@
 
         <!-- VIEW: SETTINGS -->
         <section id="view-settings" class="view-section">
+            <div class="chart-card" style="max-width: 600px; margin: 0 auto 20px auto;">
+                <h3>Tema & Penampilan</h3>
+                <div class="flex-col gap-1" style="margin-top: 15px;">
+                    <label>Warna Utama Aplikasi</label>
+                    <div class="flex gap-1 align-center" style="flex-wrap: wrap;">
+                        <!-- Presets -->
+                        <button class="color-preset" style="background-color: #4A3B32;" onclick="previewThemeColor('#4A3B32')" title="Coffee (Default)"></button>
+                        <button class="color-preset" style="background-color: #3498DB;" onclick="previewThemeColor('#3498DB')" title="Biru Laut"></button>
+                        <button class="color-preset" style="background-color: #2ECC71;" onclick="previewThemeColor('#2ECC71')" title="Hijau Daun"></button>
+                        <button class="color-preset" style="background-color: #E74C3C;" onclick="previewThemeColor('#E74C3C')" title="Merah Klasik"></button>
+                        <button class="color-preset" style="background-color: #9B59B6;" onclick="previewThemeColor('#9B59B6')" title="Ungu Elegan"></button>
+                        <button class="color-preset" style="background-color: #E67E22;" onclick="previewThemeColor('#E67E22')" title="Oranye Hangat"></button>
+                        <button class="color-preset" style="background-color: #1ABC9C;" onclick="previewThemeColor('#1ABC9C')" title="Tosca Teal"></button>
+                        <button class="color-preset" style="background-color: #34495E;" onclick="previewThemeColor('#34495E')" title="Abu-abu Slate"></button>
+                        
+                        <!-- Manual color picker -->
+                        <div style="border-left: 1px solid var(--border); margin-left: 5px; padding-left: 15px; display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 13px; color: var(--text-light);">Kustom:</span>
+                            <input type="color" id="custom-theme-color" oninput="previewThemeColor(this.value)" title="Pilih Warna Kustom">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="chart-card" style="max-width: 600px; margin: 0 auto;">
                 <h3>Pengaturan Aplikasi</h3>
                 <div class="flex-col gap-1" style="margin-top: 15px;">
@@ -925,6 +967,20 @@
                     
                     <button class="btn btn-primary" style="margin-top: 15px;" onclick="saveSettings()">Simpan Pengaturan</button>
                     <button class="btn btn-outline" style="margin-top: 10px;" onclick="resetData()"><i class="fas fa-trash"></i> Reset Data Pabrik</button>
+                </div>
+            </div>
+
+            <div class="chart-card" style="max-width: 600px; margin: 20px auto 0 auto;">
+                <h3>Backup & Restore Data</h3>
+                <div class="flex-col gap-1" style="margin-top: 15px;">
+                    <p style="font-size: 13px; color: var(--text-light);">Simpan seluruh data (menu, meja, pengaturan, & riwayat) ke dalam file JSON, atau pulihkan dari file JSON yang pernah Anda cadangkan.</p>
+                    <div class="flex gap-1" style="margin-top: 10px;">
+                        <button class="btn btn-secondary" style="flex: 1;" onclick="backupData()"><i class="fas fa-download"></i> Backup (JSON)</button>
+                        <label class="btn btn-outline" style="flex: 1; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <i class="fas fa-upload"></i> Restore (JSON)
+                            <input type="file" id="restore-file" accept=".json" style="display: none;" onchange="restoreData(event)">
+                        </label>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1026,6 +1082,30 @@
                     <button class="btn btn-danger" id="btn-delete-table" onclick="deleteTable()" style="flex: 1;"><i class="fas fa-trash"></i> Hapus Meja</button>
                     <button class="btn btn-primary" onclick="saveTable()" style="flex: 1;"><i class="fas fa-save"></i> Simpan</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT TRANSAKSI (RIWAYAT) -->
+    <div class="modal-overlay" id="modal-edit-trx">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Edit Informasi Transaksi</h3>
+                <button class="close-btn" onclick="closeModal('modal-edit-trx')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body flex-col gap-1">
+                <input type="hidden" id="edit-trx-id">
+                <label>Nama Pelanggan</label>
+                <input type="text" id="edit-trx-customer">
+                <label>Meja</label>
+                <input type="text" id="edit-trx-table">
+                <label>Metode Pembayaran</label>
+                <select id="edit-trx-method">
+                    <option value="Tunai">Tunai</option>
+                    <option value="QRIS">QRIS</option>
+                    <option value="Debit/Kredit">Debit/Kredit</option>
+                </select>
+                <button class="btn btn-primary" style="margin-top: 15px;" onclick="saveEditTransaction()"><i class="fas fa-save"></i> Simpan Perubahan</button>
             </div>
         </div>
     </div>
@@ -1187,7 +1267,8 @@
             tax: 11, 
             service: 5, 
             logoUrl: "", 
-            gasUrl: "https://script.google.com/macros/s/AKfycby2tw5G9B3KFVLBKozeGBMcLrmEWP-twwMrV0KoqBMSViH6MNKZsgKQ0IxKEyFwYTlO/exec" 
+            gasUrl: "https://script.google.com/macros/s/AKfycby2tw5G9B3KFVLBKozeGBMcLrmEWP-twwMrV0KoqBMSViH6MNKZsgKQ0IxKEyFwYTlO/exec",
+            themeColor: "#4A3B32"
         };
         
         // Pembuatan 50 Data Menu Secara Terstruktur
@@ -1310,7 +1391,11 @@
             setInterval(updateClock, 1000);
             
             // Check Theme
-            if(localStorage.getItem('pos_theme') === 'dark') toggleTheme(true);
+            if(localStorage.getItem('pos_theme') === 'dark') {
+                toggleTheme(true);
+            } else {
+                applyColorVariables(appData.settings.themeColor || "#4A3B32");
+            }
 
             // Perbarui menu jika versi localStorage masih yang lama (8 item) agar mendapat 50 item.
             if(appData.menus.length < 50) {
@@ -1448,6 +1533,23 @@
             }
         }
 
+        // Fungsi pengaturan dinamika warna Tema
+        function applyColorVariables(color) {
+            const isDark = document.body.classList.contains('dark-mode');
+            if (isDark) {
+                document.documentElement.style.setProperty('--primary', '#D4AF37'); // Gold sebagai aksen utama di dark mode
+                document.documentElement.style.setProperty('--secondary', color);   // Warna brand custom dijadikan aksen sekunder
+            } else {
+                document.documentElement.style.setProperty('--primary', color);     // Warna brand custom
+                document.documentElement.style.setProperty('--secondary', '#D4AF37'); // Gold sebagai aksen sekunder
+            }
+        }
+
+        function previewThemeColor(color) {
+            document.getElementById('custom-theme-color').value = color;
+            applyColorVariables(color);
+        }
+
         function toggleTheme(forceDark = false) {
             const isDark = forceDark || !document.body.classList.contains('dark-mode');
             if (isDark) {
@@ -1459,6 +1561,11 @@
                 document.getElementById('theme-icon').className = 'fas fa-moon';
                 localStorage.setItem('pos_theme', 'light');
             }
+            
+            // Re-apply tema warna agar posisi warna (primary/secondary) bertukar dengan benar
+            const currentColor = appData.settings.themeColor || "#4A3B32";
+            applyColorVariables(currentColor);
+            
             initDashboard(); // Re-render charts for theme colors
         }
 
@@ -1576,6 +1683,7 @@
             updateCart();
         }
 
+        // Modifikasi updateCartQty agar logic input stok bekerja dengan aman
         function updateCartQty(id, change) {
             const menu = appData.menus.find(m => m.id === id);
             const item = cart.find(c => c.id === id);
@@ -2024,19 +2132,29 @@
             const tbody = document.getElementById('history-table-body');
             tbody.innerHTML = filteredTransactions.slice(0, 100).map(t => `
                 <tr>
+                    <td><input type="checkbox" class="cb-history" value="${t.id}" onchange="checkHistorySelection()"></td>
                     <td class="bold">${t.id}</td>
                     <td>${t.date}</td>
                     <td>${t.customer}</td>
                     <td>${t.table}</td>
                     <td><span class="badge badge-success">${t.method}</span></td>
                     <td class="bold text-gold">${formatRp(t.total)}</td>
-                    <td><button class="btn btn-outline btn-icon" onclick="reprint('${t.id}')" title="Cetak Struk Ulang"><i class="fas fa-receipt"></i></button></td>
+                    <td>
+                        <button class="btn btn-outline btn-icon" onclick="editTransaction('${t.id}')" title="Edit Transaksi"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-outline btn-icon" style="color: var(--danger); border-color: var(--danger);" onclick="deleteTransaction('${t.id}')" title="Hapus Transaksi"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-outline btn-icon" onclick="reprint('${t.id}')" title="Cetak Struk Ulang"><i class="fas fa-receipt"></i></button>
+                    </td>
                 </tr>
             `).join('');
             
             if(filteredTransactions.length === 0) {
-                 tbody.innerHTML = `<tr><td colspan="7" class="text-center">Tidak ada transaksi pada periode ini.</td></tr>`;
+                 tbody.innerHTML = `<tr><td colspan="8" class="text-center">Tidak ada transaksi pada periode ini.</td></tr>`;
             }
+
+            // Reset state checkbox all
+            const cbAll = document.getElementById('cb-all-history');
+            if(cbAll) cbAll.checked = false;
+            checkHistorySelection();
         }
 
         function printReport() {
@@ -2149,6 +2267,8 @@
             document.getElementById('set-tax').value = appData.settings.tax;
             document.getElementById('set-service').value = appData.settings.service;
             
+            document.getElementById('custom-theme-color').value = appData.settings.themeColor || "#4A3B32";
+            
             document.getElementById('tax-rate-display').innerText = appData.settings.tax;
             document.getElementById('service-rate-display').innerText = appData.settings.service;
             document.getElementById('cust-mode-store-name').innerText = appData.settings.name;
@@ -2181,6 +2301,9 @@
             appData.settings.address = document.getElementById('set-address').value;
             appData.settings.tax = parseFloat(document.getElementById('set-tax').value) || 0;
             appData.settings.service = parseFloat(document.getElementById('set-service').value) || 0;
+            
+            // Simpan Warna Tema
+            appData.settings.themeColor = document.getElementById('custom-theme-color').value;
             
             saveData();
             initSettingsUI();
@@ -2342,6 +2465,7 @@
             document.getElementById('cust-cart-badge').innerText = totalItems;
         }
 
+        // Modifikasi showCustomerCartModal agar data muat dengan konsisten
         function showCustomerCartModal() {
             if(customerCart.length === 0) return alert("Keranjang Anda masih kosong. Silakan pilih menu!");
             renderCustomerCartItems();
@@ -2427,6 +2551,29 @@
         }
 
         // --- 12. ACTIVE ORDERS (ADMIN) LOGIC ---
+        async function refreshActiveOrders() {
+            const btn = document.getElementById('btn-refresh-orders');
+            if(btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
+            }
+            
+            // Coba tarik data terbaru dari cloud jika URL tersedia
+            if (appData.settings.gasUrl) {
+                await loadDataFromCloud(appData.settings.gasUrl);
+            } else {
+                // Delay buatan untuk mode lokal agar terlihat efek refresh
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            renderActiveOrders();
+            
+            if(btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+            }
+        }
+
         function renderActiveOrders() {
             const container = document.getElementById('active-orders-grid');
             
@@ -2494,6 +2641,104 @@
             
             // Highlight ke kasir
             alert(`Pesanan Meja ${order.table} (${order.customer}) berhasil dimuat ke Kasir.\nSilakan proses pembayaran.`);
+        }
+
+        // --- 13. FITUR TAMBAHAN (BACKUP, RESTORE, & HISTORY ACTIONS) ---
+        
+        function backupData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "CafePOS_Backup_" + new Date().getTime() + ".json");
+            document.body.appendChild(dlAnchorElem);
+            dlAnchorElem.click();
+            document.body.removeChild(dlAnchorElem);
+        }
+
+        function restoreData(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if(parsed.settings && parsed.menus && parsed.tables) {
+                        if(confirm("PERINGATAN! Data aplikasi saat ini akan ditimpa secara permanen dengan data dari file backup. Lanjutkan?")) {
+                            appData = parsed;
+                            saveData(true);
+                            alert("Restore berhasil! Aplikasi akan dimuat ulang.");
+                            location.reload();
+                        }
+                    } else {
+                        alert("Format JSON tidak valid atau rusak untuk aplikasi ini.");
+                    }
+                } catch(err) {
+                    alert("Gagal membaca file JSON.");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; // Reset input
+        }
+
+        function toggleAllHistory(el) {
+            const checkboxes = document.querySelectorAll('.cb-history');
+            checkboxes.forEach(cb => cb.checked = el.checked);
+            checkHistorySelection();
+        }
+
+        function checkHistorySelection() {
+            const selected = document.querySelectorAll('.cb-history:checked').length;
+            const btnDelete = document.getElementById('btn-bulk-delete');
+            if(selected > 0) {
+                btnDelete.style.display = 'inline-flex';
+                btnDelete.innerHTML = `<i class="fas fa-trash"></i> Hapus Terpilih (${selected})`;
+            } else {
+                btnDelete.style.display = 'none';
+            }
+        }
+
+        function deleteSelectedHistory() {
+            const selectedNodes = document.querySelectorAll('.cb-history:checked');
+            if(selectedNodes.length === 0) return;
+            if(confirm(`Apakah Anda yakin ingin menghapus ${selectedNodes.length} transaksi terpilih secara permanen?`)) {
+                const idsToDelete = Array.from(selectedNodes).map(cb => cb.value);
+                appData.transactions = appData.transactions.filter(t => !idsToDelete.includes(t.id));
+                saveData();
+                applyHistoryFilter();
+                initDashboard();
+            }
+        }
+
+        function deleteTransaction(id) {
+            if(confirm("Apakah Anda yakin ingin menghapus transaksi ini secara permanen?")) {
+                appData.transactions = appData.transactions.filter(t => t.id !== id);
+                saveData();
+                applyHistoryFilter();
+                initDashboard();
+            }
+        }
+
+        function editTransaction(id) {
+            const t = appData.transactions.find(x => x.id === id);
+            if(!t) return;
+            document.getElementById('edit-trx-id').value = t.id;
+            document.getElementById('edit-trx-customer').value = t.customer;
+            document.getElementById('edit-trx-table').value = t.table;
+            document.getElementById('edit-trx-method').value = t.method;
+            showModal('modal-edit-trx');
+        }
+
+        function saveEditTransaction() {
+            const id = document.getElementById('edit-trx-id').value;
+            const t = appData.transactions.find(x => x.id === id);
+            if(t) {
+                t.customer = document.getElementById('edit-trx-customer').value;
+                t.table = document.getElementById('edit-trx-table').value;
+                t.method = document.getElementById('edit-trx-method').value;
+                saveData();
+                applyHistoryFilter();
+                closeModal('modal-edit-trx');
+            }
         }
     </script>
 </body>
