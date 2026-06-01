@@ -8,11 +8,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            /* Color Palette: Coffee, Gold, Dark, White */
-            --primary: #4A3B32; /* Coffee Brown */
-            --secondary: #D4AF37; /* Elegant Gold */
-            --dark: #1E1E1E; /* Almost Black */
-            --light: #F9F6F0; /* Off White / Cream */
+            /* Color Palette Default (Diatur via JS untuk Tema) */
+            --primary: #4A3B32; 
+            --secondary: #D4AF37; 
+            
+            /* Warna Dasar (Static) */
+            --dark: #1E1E1E; 
+            --light: #F9F6F0; 
             --surface: #FFFFFF;
             --text-main: #333333;
             --text-light: #888888;
@@ -25,8 +27,7 @@
         }
 
         .dark-mode {
-            --primary: #D4AF37;
-            --secondary: #4A3B32;
+            /* Warna primer & sekunder untuk dark mode dihandle via JavaScript applyThemeColors() */
             --dark: #F9F6F0;
             --light: #121212;
             --surface: #1E1E1E;
@@ -87,9 +88,9 @@
             gap: 8px;
         }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: #3a2e27; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .btn-primary:hover { opacity: 0.9; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .btn-secondary { background: var(--secondary); color: var(--dark); }
-        .btn-secondary:hover { background: #b8972e; }
+        .btn-secondary:hover { opacity: 0.9; }
         .btn-danger { background: var(--danger); color: white; }
         .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
         .dark-mode .btn-outline { border-color: var(--secondary); color: var(--secondary); }
@@ -106,7 +107,7 @@
             outline: none;
             transition: border 0.3s;
         }
-        input:focus, select:focus { border-color: var(--secondary); box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2); }
+        input:focus, select:focus { border-color: var(--secondary); box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05); }
         
         .filter-date-group { display: flex; align-items: center; gap: 8px; background: var(--surface); padding: 5px; border-radius: 8px; border: 1px solid var(--border); }
         .filter-date-group input[type="date"] { border: none; padding: 5px; box-shadow: none; background: transparent; }
@@ -145,7 +146,7 @@
             transition: 0.3s;
         }
         .nav-item:hover, .nav-item.active {
-            background: rgba(212, 175, 55, 0.1);
+            background: rgba(255, 255, 255, 0.1);
             color: var(--secondary);
             border-right: 4px solid var(--secondary);
         }
@@ -164,7 +165,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            min-width: 0; /* Mencegah flex child meluber dari layar */
+            min-width: 0; 
             transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .topbar {
@@ -183,7 +184,7 @@
             flex: 1;
             padding: 20px;
             overflow-y: auto;
-            display: none; /* Hidden by default */
+            display: none; 
         }
         .view-section.active { display: block; animation: fadeIn 0.3s ease; }
 
@@ -210,18 +211,18 @@
             gap: 20px;
             border-bottom: 4px solid var(--secondary);
         }
-        .stat-icon { width: 60px; height: 60px; border-radius: 12px; background: rgba(212, 175, 55, 0.1); color: var(--secondary); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .stat-icon { width: 60px; height: 60px; border-radius: 12px; background: rgba(255, 255, 255, 0.1); color: var(--secondary); display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid var(--border); }
         .stat-info h4 { font-size: 14px; color: var(--text-light); margin-bottom: 5px; }
         .stat-info h2 { font-size: 24px; color: var(--text-main); margin: 0; }
         .charts-container { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         .chart-card { background: var(--surface); padding: 20px; border-radius: 12px; box-shadow: var(--shadow); display: flex; flex-direction: column; }
         .chart-wrapper { position: relative; height: 260px; width: 100%; flex: 1; }
 
-        /* POS View - Side-by-Side (Menu di Kiri, Keranjang di Kanan) */
+        /* POS View - Menu Area Full Width (Cart moved to Pop up) */
         .pos-container { 
             display: flex; 
-            flex-direction: row; 
-            gap: 20px; 
+            flex-direction: column; 
+            gap: 10px; 
             height: 100%; 
             min-height: 0; 
             flex: 1; 
@@ -234,34 +235,19 @@
             flex-direction: column; 
             gap: 12px; 
             min-height: 0; 
-            min-width: 0; /* Menjamin flexbox mengecil secara proporsional */
-        }
-        
-        .cart-area { 
-            width: 380px; 
-            background: var(--surface); 
-            border-radius: 16px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08); 
-            display: flex; 
-            flex-direction: column; 
-            border: 1px solid var(--border); 
-            overflow: hidden; 
-            height: 100%; /* Mengunci tinggi 100% dari container POS */
-            flex-shrink: 0; /* Mencegah keranjang menyusut dan tertutup oleh menu */
+            width: 100%;
         }
         
         .menu-controls { display: flex; flex-direction: column; gap: 10px; margin-bottom: 5px; flex-shrink: 0; }
         .search-box { position: relative; width: 100%; max-width: 400px; }
         .search-box input { padding-left: 40px; border-radius: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
         .menu-filter { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
-        .filter-btn { padding: 8px 18px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; white-space: nowrap; font-size: 14px; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); font-weight: bold; box-shadow: 0 4px 10px rgba(74, 59, 50, 0.3); }
-        .dark-mode .filter-btn.active { background: var(--secondary); color: var(--dark); border-color: var(--secondary); box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3); }
+        .filter-btn { padding: 8px 18px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; white-space: nowrap; font-size: 14px; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02); color: var(--text-main); }
+        .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
+        .dark-mode .filter-btn.active { background: var(--secondary); color: var(--dark); border-color: var(--secondary); }
         
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 15px; overflow-y: auto; padding-bottom: 15px; align-content: start; flex: 1; min-height: 0; }
-        
-        /* Mengunci Grid Menu Kasir menjadi 3 Kolom */
-        #view-pos .menu-grid { grid-template-columns: repeat(3, 1fr); }
+        /* Grid dinamis menyesuaikan lebar penuh layar */
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 18px; overflow-y: auto; padding-bottom: 80px; align-content: start; flex: 1; min-height: 0; }
 
         .menu-card { background: var(--surface); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid var(--border); position: relative; display: flex; flex-direction: column; flex-shrink: 0; height: 260px; }
         .menu-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); border-color: var(--secondary); }
@@ -274,45 +260,79 @@
         .menu-card:hover .add-icon { opacity: 1; transform: translateY(0); }
         .dark-mode .add-icon { background: var(--secondary); color: var(--dark); }
 
-        /* Cart Area Styling - Stacked Vertically */
-        .cart-header { padding: 15px 20px; border-bottom: 1px solid var(--border); background: var(--primary); color: white; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-        .cart-header h3 { margin: 0; color: white; font-size: 16px; display: flex; align-items: center; gap: 10px; }
-        .dark-mode .cart-header { background: var(--surface); border-bottom: 2px solid var(--secondary); }
-        .dark-mode .cart-header h3 { color: var(--secondary); }
+        /* Kapsul Keranjang Admin (Dipindah ke atas sebelah search) */
+        #admin-cart-capsule {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .dark-mode #admin-cart-capsule {
+            background: var(--secondary);
+            color: var(--dark);
+        }
+        #admin-cart-capsule:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        #admin-cart-capsule .badge-count {
+            background: var(--secondary);
+            color: var(--dark);
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 12px;
+        }
+        .dark-mode #admin-cart-capsule .badge-count {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Floating Cart untuk Pelanggan */
+        .floating-cart { position: fixed; bottom: 30px; right: 30px; background: var(--secondary); color: var(--dark); border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; box-shadow: 0 10px 25px rgba(0,0,0,0.2); cursor: pointer; z-index: 100; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .floating-cart:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
+        .floating-cart .badge-count { background: var(--danger); color: white; border-radius: 50%; padding: 2px 8px; font-size: 12px; }
+
+        /* Cart Area Styling (Didalam Modal) */
+        .admin-cart-layout { display: flex; flex-direction: row; gap: 20px; width: 100%; }
+        .admin-cart-col { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+        .cart-customer-info { padding: 15px; background: rgba(0,0,0,0.02); border: 1px solid var(--border); border-radius: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         
-        .cart-customer-info { padding: 15px; background: rgba(0,0,0,0.015); border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex-shrink: 0; }
-        .cart-customer-info input, .cart-customer-info select { background: var(--surface); padding: 8px 12px; border-radius: 6px; font-size: 13px; border-color: rgba(0,0,0,0.1); }
-        .dark-mode .cart-customer-info input, .dark-mode .cart-customer-info select { border-color: rgba(255,255,255,0.1); }
-        
-        /* Modifikasi .cart-items agar maksimal 3 baris dan bisa di-scroll vertikal */
-        .cart-items { overflow-y: auto; padding: 15px; max-height: 220px; flex-shrink: 0; }
+        .cart-items { flex: 1; overflow-y: auto; padding: 15px; border: 1px solid var(--border); border-radius: 12px; max-height: 40vh; background: var(--light); }
         .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px dashed var(--border); padding-bottom: 12px; transition: all 0.2s; }
         .cart-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .cart-item-info { flex: 1; }
-        .cart-item-info h4 { font-size: 13px; margin: 0 0 4px 0; color: var(--text-main); }
-        .cart-item-price { color: var(--text-light); font-size: 11px; }
+        .cart-item-info h4 { font-size: 14px; margin: 0 0 4px 0; color: var(--text-main); }
+        .cart-item-price { color: var(--text-light); font-size: 12px; }
         
         .cart-item-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-        .cart-qty-ctrl { display: flex; align-items: center; gap: 8px; background: var(--light); border-radius: 20px; padding: 3px; border: 1px solid var(--border); }
-        .cart-qty-ctrl button { width: 22px; height: 22px; border-radius: 50%; border: none; background: var(--surface); color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.2s; }
+        .cart-qty-ctrl { display: flex; align-items: center; gap: 8px; background: var(--surface); border-radius: 20px; padding: 3px; border: 1px solid var(--border); }
+        .cart-qty-ctrl button { width: 22px; height: 22px; border-radius: 50%; border: none; background: var(--light); color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.2s; }
         .cart-qty-ctrl button:hover { background: var(--primary); color: white; }
         .dark-mode .cart-qty-ctrl button:hover { background: var(--secondary); color: var(--dark); }
-        .cart-qty-ctrl span { font-weight: bold; width: 16px; text-align: center; font-size: 11px; }
+        .cart-qty-ctrl span { font-weight: bold; width: 16px; text-align: center; font-size: 12px; }
         
-        .cart-summary-wrapper { background: var(--light); border-top: 1px solid var(--border); padding: 15px 20px; flex-shrink: 0; }
-        .cart-summary { width: 100%; display: flex; flex-direction: column; gap: 6px; }
-        .summary-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-light); align-items: center; }
+        .cart-summary { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 15px; width: 100%; display: flex; flex-direction: column; gap: 6px; }
+        .summary-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-light); align-items: center; }
         .summary-row span:last-child { color: var(--text-main); font-weight: 600; }
-        .summary-total { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 2px dashed var(--border); font-size: 16px; font-weight: 900; color: var(--primary); align-items: center; }
+        .summary-total { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 2px dashed var(--border); font-size: 18px; font-weight: 900; color: var(--primary); align-items: center; }
         .dark-mode .summary-total { color: var(--secondary); }
-        
-        .cart-actions { display: flex; gap: 10px; margin-top: 10px; width: 100%; }
-        .cart-actions .btn { flex: 1; padding: 10px; font-size: 13px; border-radius: 8px; }
 
         /* Tables & Lists */
         .data-table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow); }
         .data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border); }
         .data-table th { background: var(--primary); color: white; font-weight: 600; }
+        .dark-mode .data-table th { background: var(--surface); border-bottom: 2px solid var(--secondary); color: var(--secondary); }
         .data-table tbody tr:hover { background: var(--light); }
         .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
         .badge-success { background: rgba(46, 204, 113, 0.2); color: var(--success); }
@@ -321,11 +341,123 @@
         .badge-info { background: rgba(52, 152, 219, 0.2); color: var(--info); }
 
         /* Modal */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(3px); }
-        .modal { background: var(--surface); padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 15px 50px rgba(0,0,0,0.3); animation: slideDown 0.3s ease; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 200; backdrop-filter: blur(3px); }
+        .modal { background: var(--surface); padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 15px 50px rgba(0,0,0,0.3); animation: slideDown 0.3s ease; max-height: 95vh; overflow-y: auto; }
         @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 15px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 15px; position: sticky; top: 0; background: var(--surface); z-index: 10; }
         .close-btn { background: transparent; border: none; font-size: 20px; cursor: pointer; color: var(--text-light); }
+
+        /* --- PRESTASI METODE PEMBAYARAN PREMIUM --- */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .pay-method {
+            border: 2px solid var(--border);
+            padding: 16px 10px;
+            text-align: center;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--surface);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .pay-method:hover {
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+        .pay-method i {
+            font-size: 26px;
+            color: var(--text-light);
+            transition: color 0.25s ease;
+        }
+        .pay-method span {
+            font-weight: bold;
+            font-size: 13px;
+            color: var(--text-main);
+        }
+        /* Lencana Lunas / Centang Aktif */
+        .pay-method .check-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--success);
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+        .pay-method.active .check-badge {
+            display: flex;
+        }
+        /* Active state styles per tipe payment */
+        .pay-method[data-method="Tunai"].active {
+            border-color: #2ECC71;
+            background: rgba(46, 204, 113, 0.08);
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.15);
+        }
+        .pay-method[data-method="Tunai"].active i {
+            color: #2ECC71;
+        }
+        .pay-method[data-method="QRIS"].active {
+            border-color: #3498DB;
+            background: rgba(52, 152, 219, 0.08);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.15);
+        }
+        .pay-method[data-method="QRIS"].active i {
+            color: #3498DB;
+        }
+        .pay-method[data-method="Debit/Kredit"].active {
+            border-color: #9B59B6;
+            background: rgba(155, 89, 182, 0.08);
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.15);
+        }
+        .pay-method[data-method="Debit/Kredit"].active i {
+            color: #9B59B6;
+        }
+
+        /* Checkbox styling */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .custom-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        /* Bulk actions bar */
+        .bulk-actions-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.2);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            animation: fadeIn 0.2s ease;
+        }
+        .bulk-actions-bar span {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--danger);
+        }
 
         /* Sync Indicator */
         #sync-indicator { font-size: 11px; padding: 4px 10px; border-radius: 12px; background: rgba(0,0,0,0.05); font-weight: bold; }
@@ -334,13 +466,6 @@
         .sync-error { color: var(--danger); }
         .sync-success { color: var(--success); }
         @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
-
-        /* Theme Settings */
-        .color-preset { width: 35px; height: 35px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .color-preset:hover { transform: scale(1.1); border-color: var(--secondary); }
-        input[type="color"] { -webkit-appearance: none; border: none; width: 40px; height: 40px; border-radius: 8px; cursor: pointer; padding: 0; background: none; }
-        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
         /* --- STYLES KHUSUS MODE PELANGGAN --- */
         /* Sticky segmented control tanpa spasi */
@@ -357,102 +482,39 @@
             justify-content: center;
             overflow-x: auto;
         }
-        .dark-mode .cust-sticky-bar {
-            background: #121212;
-        }
-        .segmented-control {
-            display: inline-flex;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1.5px solid var(--primary);
-            background: var(--surface);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-            flex-shrink: 0;
-        }
-        .dark-mode .segmented-control {
-            border-color: var(--secondary);
-        }
-        .segmented-control .filter-btn {
-            border: none;
-            border-radius: 0;
-            margin: 0;
-            padding: 10px 24px;
-            background: transparent;
-            color: var(--text-main);
-            font-weight: 600;
-            font-size: 13px;
-            transition: all 0.2s;
-            border-right: 1px solid var(--border);
-            box-shadow: none;
-        }
-        .segmented-control .filter-btn:last-child {
-            border-right: none;
-        }
-        .segmented-control .filter-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-        .dark-mode .segmented-control .filter-btn.active {
-            background: var(--secondary);
-            color: var(--dark);
-        }
+        .dark-mode .cust-sticky-bar { background: #121212; }
+        .segmented-control { display: inline-flex; border-radius: 12px; overflow: hidden; border: 1.5px solid var(--primary); background: var(--surface); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); flex-shrink: 0; }
+        .dark-mode .segmented-control { border-color: var(--secondary); }
+        .segmented-control .filter-btn { border: none; border-radius: 0; margin: 0; padding: 10px 24px; background: transparent; color: var(--text-main); font-weight: 600; font-size: 13px; transition: all 0.2s; border-right: 1px solid var(--border); box-shadow: none; }
+        .segmented-control .filter-btn:last-child { border-right: none; }
+        .segmented-control .filter-btn.active { background: var(--primary); color: white; }
+        .dark-mode .segmented-control .filter-btn.active { background: var(--secondary); color: var(--dark); }
 
         /* Ukuran menu card lebih kecil di sisi pelanggan */
-        #cust-menu-grid {
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-        }
-        #cust-menu-grid .menu-card {
-            height: 195px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-        }
-        #cust-menu-grid .menu-img {
-            height: 110px;
-        }
-        #cust-menu-grid .menu-details {
-            padding: 8px 10px;
-        }
-        #cust-menu-grid .menu-title {
-            font-size: 12px;
-            font-weight: 600;
-            line-height: 1.25;
-            margin-bottom: 2px;
-        }
-        #cust-menu-grid .menu-price {
-            font-size: 11px;
-        }
-        #cust-menu-grid .add-icon {
-            width: 26px;
-            height: 26px;
-            bottom: 8px;
-            right: 8px;
-            font-size: 11px;
-        }
+        #cust-menu-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
+        #cust-menu-grid .menu-card { height: 195px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        #cust-menu-grid .menu-img { height: 110px; }
+        #cust-menu-grid .menu-details { padding: 8px 10px; }
+        #cust-menu-grid .menu-title { font-size: 12px; font-weight: 600; line-height: 1.25; margin-bottom: 2px; }
+        #cust-menu-grid .menu-price { font-size: 11px; }
+        #cust-menu-grid .add-icon { width: 26px; height: 26px; bottom: 8px; right: 8px; font-size: 11px; }
 
         /* Efek Zoom Animasi pada Modal Detail */
-        @keyframes imageZoom {
-            from { transform: scale(1.1); opacity: 0.8; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        #cust-detail-img {
-            animation: imageZoom 0.45s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-        }
+        @keyframes imageZoom { from { transform: scale(1.1); opacity: 0.8; } to { transform: scale(1); opacity: 1; } }
+        #cust-detail-img { animation: imageZoom 0.45s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
 
-        /* Customer Mode & Active Orders */
+        /* Customer Mode */
         body.customer-mode .sidebar, body.customer-mode .topbar { display: none !important; }
         body.customer-mode .main-content { margin: 0; padding: 0; background: var(--light); }
         body.customer-mode .view-section { padding: 0; }
-        
         .customer-header { background: var(--primary); color: white; padding: 30px 20px; text-align: center; position: relative; border-bottom: 4px solid var(--secondary); }
+        .dark-mode .customer-header { background: var(--surface); border-bottom: 4px solid var(--secondary); }
         .customer-header h2 { color: var(--secondary); margin-bottom: 5px; font-size: 28px; }
         .customer-header p { color: rgba(255,255,255,0.8); font-size: 14px; }
+        .dark-mode .customer-header p { color: var(--text-light); }
         .btn-exit-customer { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.2); color: white; border: none; padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 18px; transition: 0.3s; z-index: 10; }
+        .dark-mode .btn-exit-customer { background: var(--border); color: var(--text-main); }
         .btn-exit-customer:hover { background: rgba(255,255,255,0.2); transform: rotate(90deg); }
-        
-        .floating-cart { position: fixed; bottom: 30px; right: 30px; background: var(--secondary); color: var(--dark); border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4); cursor: pointer; z-index: 100; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
-        .floating-cart:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(212, 175, 55, 0.6); }
-        .floating-cart .badge-count { background: var(--danger); color: white; border-radius: 50%; padding: 2px 8px; font-size: 12px; }
 
         .order-card { background: var(--surface); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); border-left: 5px solid var(--secondary); }
         .order-card-header { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border); padding-bottom: 10px; margin-bottom: 10px; }
@@ -465,7 +527,6 @@
         @media print {
             body * { visibility: hidden; }
             body { background: white; }
-            
             .print-receipt-mode #print-receipt, .print-receipt-mode #print-receipt * { visibility: visible; }
             .print-receipt-mode #print-receipt { display: block; position: absolute; left: 0; top: 0; width: 100%; max-width: 80mm; padding: 10px; background: white; color: black; font-family: monospace; }
             .print-center { text-align: center; }
@@ -476,23 +537,13 @@
             .print-report-mode #print-report { display: block; position: absolute; left: 0; top: 0; width: 100%; background: white; color: black; padding: 20px; font-family: sans-serif; }
             .report-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
             .report-table th, .report-table td { border: 1px solid #ccc; padding: 8px; text-align: left; font-size: 12px; }
-            .report-table th { background-color: #f5f5f5 !important; -webkit-print-color-adjust: exact; }
+            .report-table th { background-color: #f5f5f5 !important; -webkit-print-color-adjust: exact; color: black; }
         }
 
         /* --- RESPONSIVE UNTUK TABLET --- */
         @media (max-width: 1024px) {
-            .pos-container { flex-direction: column; overflow-y: hidden; }
-            .menu-area { flex: 1.2; min-height: 0; }
-            
-            /* Mengunci tinggi total keranjang di tablet landscape/portrait agar tidak berantakan */
-            .cart-area { width: 100%; flex: 1; display: flex; flex-direction: column; min-height: 0; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
-            .cart-row-layout { flex-direction: row; flex: 1; min-height: 0; }
-            .cart-col-left { flex: 1.5; display: flex; flex-direction: column; min-height: 0; border-bottom: none; border-right: 1px solid var(--border); }
-            .cart-col-right { flex: 1; display: flex; flex-direction: column; background: var(--light); padding: 15px 20px; overflow-y: auto; }
-            .cart-items { flex: 1; overflow-y: auto; min-height: 0; }
-            
-            #view-pos.active { height: calc(100vh - 70px); overflow: hidden; }
             #view-pos .menu-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+            .admin-cart-layout { flex-direction: column; }
         }
 
         /* --- RESPONSIVE UNTUK HANDPHONE (HP) --- */
@@ -500,72 +551,28 @@
             body { flex-direction: column; }
             
             /* Ubah Sidebar menjadi Sticky Bottom Navigation */
-            .sidebar { 
-                position: fixed; 
-                bottom: 0; 
-                left: 0; 
-                width: 100%; 
-                height: 65px; 
-                flex-direction: row; 
-                margin-left: 0 !important; 
-                padding: 0; 
-                box-shadow: 0 -5px 20px rgba(0,0,0,0.2); 
-                z-index: 1000; 
-                background: var(--dark);
-            }
-            .sidebar.hidden { display: flex !important; margin-left: 0 !important; } /* Mencegah hide toggle pada HP */
+            .sidebar { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; flex-direction: row; margin-left: 0 !important; padding: 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); z-index: 1000; background: var(--dark); }
+            .sidebar.hidden { display: flex !important; margin-left: 0 !important; }
             .brand, .user-info { display: none !important; }
             
-            /* Menu Navigasi Bawah Horizontal Scrollable */
-            .nav-menu { 
-                display: flex; 
-                flex-direction: row; 
-                width: 100%; 
-                overflow-x: auto; 
-                padding: 0 10px; 
-                margin: 0; 
-                align-items: center;
-                scroll-behavior: smooth;
-            }
-            .nav-menu::-webkit-scrollbar { display: none; } /* Sembunyikan scrollbar agar rapi */
+            .nav-menu { display: flex; flex-direction: row; width: 100%; overflow-x: auto; padding: 0 10px; margin: 0; align-items: center; scroll-behavior: smooth; }
+            .nav-menu::-webkit-scrollbar { display: none; }
             
-            .nav-item { 
-                padding: 5px; 
-                flex: 0 0 22%; /* 4 item terlihat, sisanya bisa di-swipe */
-                flex-direction: column; 
-                gap: 5px; 
-                justify-content: center;
-                border: none !important; 
-                height: 100%;
-            }
+            .nav-item { padding: 5px; flex: 0 0 22%; flex-direction: column; gap: 5px; justify-content: center; border: none !important; height: 100%; }
             .nav-item.active { background: rgba(212, 175, 55, 0.1); border-radius: 8px; }
             .nav-item i { font-size: 22px; margin: 0; }
             .nav-item span { display: block !important; font-size: 10px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
 
-            /* Penyesuaian Ruang Konten Utama */
-            .main-content { 
-                height: calc(100vh - 65px); 
-                padding-bottom: 65px; /* Spasi untuk bottom nav */
-            }
+            .main-content { height: calc(100vh - 65px); padding-bottom: 65px; }
             body.customer-mode .main-content { padding-bottom: 0; height: 100vh; }
-            #btn-toggle-sidebar { display: none; } /* Sembunyikan tombol hamburger */
+            #btn-toggle-sidebar { display: none; }
 
-            /* Penyesuaian Topbar */
             .topbar { padding: 0 15px; }
             #page-title { font-size: 16px; }
 
-            /* Penyesuaian POS di Handphone */
-            #view-pos.active { 
-                height: calc(100vh - 70px - 65px); 
-                padding: 10px; 
-                overflow: hidden; 
-            }
-            .pos-container { flex-direction: column; gap: 10px; flex: 1; height: 100%; overflow: hidden; }
-            .menu-area { flex: 1.2; min-height: 0; }
-            .cart-area { flex: 1; width: 100%; min-height: 0; height: auto; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); border-radius: 12px; }
+            #view-pos.active { height: calc(100vh - 70px - 65px); padding: 10px; overflow: hidden; }
             
-            /* Tampilan Grid Menu menjadi 2 Kolom di Handphone */
-            #view-pos .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding-bottom: 10px; }
+            #view-pos .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding-bottom: 80px; }
             .menu-card { height: 210px; border-radius: 12px; }
             .menu-img { height: 110px; }
             .menu-details { padding: 8px; }
@@ -573,37 +580,25 @@
             .menu-price { font-size: 12px; }
             .add-icon { width: 28px; height: 28px; bottom: 8px; right: 8px; }
 
-            /* Cart Mobile Adjustments */
-            .cart-row-layout { flex-direction: column; flex: 1; overflow: hidden; }
-            .cart-col-left { flex: 1; min-width: 0; border-right: none; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
-            .cart-col-right { flex: none; min-width: 0; padding: 10px 15px; height: auto; }
-            .cart-customer-info { padding: 10px; grid-template-columns: 1fr; gap: 8px; }
-            .cart-items { flex: 1; overflow-y: auto; padding: 10px; max-height: none; min-height: 0; }
-            .cart-header { padding: 10px 15px; }
-
             /* Khusus Mode Pelanggan di HP */
-            #cust-menu-grid {
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 10px !important;
-            }
-            #cust-menu-grid .menu-card {
-                height: 180px !important;
-            }
-            #cust-menu-grid .menu-img {
-                height: 95px !important;
-            }
-            .segmented-control .filter-btn {
-                padding: 10px 14px;
-                font-size: 12px;
-            }
+            #cust-menu-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+            #cust-menu-grid .menu-card { height: 180px !important; }
+            #cust-menu-grid .menu-img { height: 95px !important; }
+            .segmented-control .filter-btn { padding: 10px 14px; font-size: 12px; }
             
-            /* Other Views Adjustment */
             .charts-container { grid-template-columns: 1fr; }
             .filter-history-group { flex-direction: column; align-items: stretch; gap: 10px; }
             .filter-date-group { width: 100%; justify-content: space-between; }
             .modal { width: 95%; padding: 20px; }
-            .payment-methods { grid-template-columns: 1fr; gap: 5px; }
-            .pay-method { padding: 10px 5px; }
+            
+            /* Payment Methods responsive styling */
+            .payment-methods { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+            .pay-method { padding: 12px 6px !important; gap: 4px !important; }
+            .pay-method i { font-size: 20px !important; }
+            .pay-method span { font-size: 11px !important; }
+            
+            .cart-customer-info { grid-template-columns: 1fr; }
+            .cart-customer-info input, .cart-customer-info select { grid-column: span 1 !important; }
         }
     </style>
 </head>
@@ -647,8 +642,14 @@
                 <h2 id="page-title" style="margin:0;">Kasir Pemesanan</h2>
             </div>
             <div class="flex gap-2 align-center">
-                <span id="sync-indicator" title="Status Cloud Sinkronisasi"><i class="fas fa-cloud"></i> Lokal</span>
-                <span id="current-time" class="bold"></span>
+                <span id="sync-indicator" title="Status Cloud Sinkronisasi" style="display:none;"><i class="fas fa-cloud"></i> Lokal</span>
+                <span id="current-time" class="bold" style="display:none;"></span>
+                
+                <!-- Full Screen Toggle Button -->
+                <button class="btn btn-icon btn-outline" onclick="toggleFullScreen()" title="Layar Penuh">
+                    <i class="fas fa-expand" id="fullscreen-icon"></i>
+                </button>
+                
                 <button class="btn btn-icon btn-outline" onclick="toggleTheme()" title="Ganti Tema">
                     <i class="fas fa-moon" id="theme-icon"></i>
                 </button>
@@ -661,12 +662,21 @@
         <!-- VIEW: POS (KASIR) -->
         <section id="view-pos" class="view-section active">
             <div class="pos-container">
-                <!-- Left Side: Catalog -->
+                <!-- Menu Area (Full Width) -->
                 <div class="menu-area">
                     <div class="menu-controls">
-                        <div class="search-box">
-                            <i class="fas fa-search" style="position: absolute; left: 15px; top: 12px; color: gray;"></i>
-                            <input type="text" id="search-menu" placeholder="Cari menu favorit..." onkeyup="filterMenus()">
+                        <div class="flex gap-2 align-center justify-between">
+                            <div class="search-box" style="flex: 1;">
+                                <i class="fas fa-search" style="position: absolute; left: 15px; top: 12px; color: gray;"></i>
+                                <input type="text" id="search-menu" placeholder="Cari menu favorit..." onkeyup="filterMenus()">
+                            </div>
+                            
+                            <!-- Kapsul Keranjang Admin yang dipindah -->
+                            <button id="admin-cart-capsule" onclick="showAdminCartModal()">
+                                <i class="fas fa-shopping-cart"></i> 
+                                <span id="admin-floating-total">Rp 0</span> 
+                                <span class="badge-count" id="admin-cart-badge" style="background: var(--secondary); color: var(--dark);">0</span>
+                            </button>
                         </div>
                         <div class="menu-filter" id="category-filters">
                             <!-- Populated by JS -->
@@ -674,70 +684,6 @@
                     </div>
                     <div class="menu-grid" id="menu-grid">
                         <!-- Populated by JS -->
-                    </div>
-                </div>
-
-                <!-- Right Side: Cart -->
-                <div class="cart-area">
-                    <div class="cart-header">
-                        <h3><i class="fas fa-shopping-cart"></i> Keranjang Pesanan</h3>
-                    </div>
-                    
-                    <div class="cart-row-layout">
-                        <!-- Left Panel inside Cart: Info & Items -->
-                        <div class="cart-col-left">
-                            <div class="cart-customer-info">
-                                <input type="text" id="cust-name" placeholder="Nama Pelanggan">
-                                <select id="cust-table">
-                                    <option value="">Pilih Meja</option>
-                                    <!-- Populated by JS -->
-                                </select>
-                                <input type="text" id="cust-notes" placeholder="Catatan (Opsional)" style="grid-column: span 2;">
-                            </div>
-                            
-                            <div class="cart-items" id="cart-items">
-                                <!-- Populated by JS -->
-                                <div style="text-align:center; color: var(--text-light); margin-top: 30px;">
-                                    <i class="fas fa-basket-shopping" style="font-size: 40px; margin-bottom: 10px; opacity: 0.3;"></i>
-                                    <p style="font-size: 13px;">Belum ada pesanan</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Right Panel inside Cart: Summary & Actions -->
-                        <div class="cart-col-right">
-                            <div class="cart-summary-wrapper">
-                                <div class="cart-summary">
-                                    <div class="summary-row">
-                                        <span>Subtotal</span>
-                                        <span id="summary-subtotal">Rp 0</span>
-                                    </div>
-                                    <div class="summary-row">
-                                        <span>PPN (<span id="tax-rate-display">11</span>%)</span>
-                                        <span id="summary-tax">Rp 0</span>
-                                    </div>
-                                    <div class="summary-row">
-                                        <span>Service (<span id="service-rate-display">5</span>%)</span>
-                                        <span id="summary-service">Rp 0</span>
-                                    </div>
-                                    <div class="summary-row">
-                                        <span>Diskon</span>
-                                        <div style="width: 120px;">
-                                            <input type="number" id="input-discount" value="0" style="padding: 6px; height: 30px; text-align: right; border-radius: 6px; border: 1px solid var(--border);" onchange="updateCart()">
-                                        </div>
-                                    </div>
-                                    <div class="summary-total">
-                                        <span>Total Bayar</span>
-                                        <span id="summary-total">Rp 0</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="cart-actions">
-                                    <button class="btn btn-danger" onclick="clearCart()">Batal</button>
-                                    <button class="btn btn-primary" onclick="showPaymentModal()">Bayar & Cetak</button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -847,10 +793,16 @@
                     <button class="btn btn-outline" onclick="setQuickDateFilter('year')">Tahun Ini</button>
                     <button class="btn btn-outline" onclick="setQuickDateFilter('all')">Semua</button>
                 </div>
-                <div class="flex gap-1">
-                    <button class="btn btn-danger" onclick="deleteSelectedHistory()" id="btn-bulk-delete" style="display: none;"><i class="fas fa-trash"></i> Hapus Terpilih</button>
-                    <button class="btn btn-secondary" onclick="printReport()"><i class="fas fa-print"></i> Cetak Laporan</button>
-                </div>
+                <button class="btn btn-secondary" onclick="printReport()"><i class="fas fa-print"></i> Cetak Laporan</button>
+            </div>
+            
+            <!-- Bulk Actions Bar (Checklist Masal) -->
+            <div id="bulk-actions-area" class="bulk-actions-bar" style="display: none;">
+                <i class="fas fa-exclamation-triangle" style="color: var(--danger); font-size: 18px;"></i>
+                <span><span id="checked-count">0</span> Transaksi terpilih</span>
+                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 12px; margin-left: auto;" onclick="deleteSelectedTransactions()">
+                    <i class="fas fa-trash-alt"></i> Hapus Terpilih
+                </button>
             </div>
             
             <div style="margin-bottom: 15px; font-weight: bold; color: var(--primary);">
@@ -860,7 +812,11 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th style="width: 40px;"><input type="checkbox" id="cb-all-history" onclick="toggleAllHistory(this)"></th>
+                        <th style="width: 40px; text-align: center;">
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="check-all-history" class="custom-checkbox" onchange="toggleAllHistoryCheckboxes(this)">
+                            </div>
+                        </th>
                         <th>No Transaksi</th>
                         <th>Waktu</th>
                         <th>Pelanggan</th>
@@ -880,7 +836,7 @@
         <section id="view-active-orders" class="view-section">
             <div class="flex justify-between align-center" style="margin-bottom: 20px;">
                 <p>Pesanan yang masuk dari pelanggan (Mode Pelanggan).</p>
-                <button class="btn btn-outline" id="btn-refresh-orders" onclick="refreshActiveOrders()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                <button class="btn btn-outline" onclick="renderActiveOrders()"><i class="fas fa-sync-alt"></i> Refresh</button>
             </div>
             <div class="menu-grid" id="active-orders-grid">
                 <!-- Populated by JS -->
@@ -914,33 +870,19 @@
 
         <!-- VIEW: SETTINGS -->
         <section id="view-settings" class="view-section">
-            <div class="chart-card" style="max-width: 600px; margin: 0 auto 20px auto;">
-                <h3>Tema & Penampilan</h3>
-                <div class="flex-col gap-1" style="margin-top: 15px;">
-                    <label>Warna Utama Aplikasi</label>
-                    <div class="flex gap-1 align-center" style="flex-wrap: wrap;">
-                        <!-- Presets -->
-                        <button class="color-preset" style="background-color: #4A3B32;" onclick="previewThemeColor('#4A3B32')" title="Coffee (Default)"></button>
-                        <button class="color-preset" style="background-color: #3498DB;" onclick="previewThemeColor('#3498DB')" title="Biru Laut"></button>
-                        <button class="color-preset" style="background-color: #2ECC71;" onclick="previewThemeColor('#2ECC71')" title="Hijau Daun"></button>
-                        <button class="color-preset" style="background-color: #E74C3C;" onclick="previewThemeColor('#E74C3C')" title="Merah Klasik"></button>
-                        <button class="color-preset" style="background-color: #9B59B6;" onclick="previewThemeColor('#9B59B6')" title="Ungu Elegan"></button>
-                        <button class="color-preset" style="background-color: #E67E22;" onclick="previewThemeColor('#E67E22')" title="Oranye Hangat"></button>
-                        <button class="color-preset" style="background-color: #1ABC9C;" onclick="previewThemeColor('#1ABC9C')" title="Tosca Teal"></button>
-                        <button class="color-preset" style="background-color: #34495E;" onclick="previewThemeColor('#34495E')" title="Abu-abu Slate"></button>
-                        
-                        <!-- Manual color picker -->
-                        <div style="border-left: 1px solid var(--border); margin-left: 5px; padding-left: 15px; display: flex; align-items: center; gap: 10px;">
-                            <span style="font-size: 13px; color: var(--text-light);">Kustom:</span>
-                            <input type="color" id="custom-theme-color" oninput="previewThemeColor(this.value)" title="Pilih Warna Kustom">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="chart-card" style="max-width: 600px; margin: 0 auto;">
                 <h3>Pengaturan Aplikasi</h3>
                 <div class="flex-col gap-1" style="margin-top: 15px;">
+                    <label>Tema Warna Aplikasi</label>
+                    <select id="set-theme-color">
+                        <option value="coffee">Classic Coffee (Cokelat & Emas)</option>
+                        <option value="ocean">Ocean Blue (Biru Laut & Biru Muda)</option>
+                        <option value="matcha">Matcha Green (Hijau & Kuning)</option>
+                        <option value="ruby">Ruby Red (Merah Gelap & Terang)</option>
+                        <option value="royal">Royal Purple (Ungu Gelap & Terang)</option>
+                        <option value="midnight">Midnight (Biru Dongker & Abu-abu)</option>
+                    </select>
+
                     <label>URL Aplikasi Web (Google Apps Script)</label>
                     <input type="text" id="set-gas-url" placeholder="https://script.google.com/macros/s/.../exec">
                     <small style="color: var(--text-light); margin-bottom: 10px;">*Isi dengan URL Deploy jika Anda menggunakan Cloud Database. Kosongkan untuk mode lokal.</small>
@@ -966,28 +908,87 @@
                     </div>
                     
                     <button class="btn btn-primary" style="margin-top: 15px;" onclick="saveSettings()">Simpan Pengaturan</button>
-                    <button class="btn btn-outline" style="margin-top: 10px;" onclick="resetData()"><i class="fas fa-trash"></i> Reset Data Pabrik</button>
-                </div>
-            </div>
-
-            <div class="chart-card" style="max-width: 600px; margin: 20px auto 0 auto;">
-                <h3>Backup & Restore Data</h3>
-                <div class="flex-col gap-1" style="margin-top: 15px;">
-                    <p style="font-size: 13px; color: var(--text-light);">Simpan seluruh data (menu, meja, pengaturan, & riwayat) ke dalam file JSON, atau pulihkan dari file JSON yang pernah Anda cadangkan.</p>
-                    <div class="flex gap-1" style="margin-top: 10px;">
-                        <button class="btn btn-secondary" style="flex: 1;" onclick="backupData()"><i class="fas fa-download"></i> Backup (JSON)</button>
-                        <label class="btn btn-outline" style="flex: 1; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    
+                    <hr style="margin: 20px 0; border: 0; border-top: 1px dashed var(--border);">
+                    <h4 style="margin-bottom: 10px; color: var(--text-main);">Manajemen Data Lokal</h4>
+                    <div class="flex gap-1" style="flex-wrap: wrap;">
+                        <button class="btn btn-outline" style="flex: 1; padding: 10px;" onclick="backupData()" title="Simpan data ke perangkat (JSON)">
+                            <i class="fas fa-download"></i> Backup (JSON)
+                        </button>
+                        <button class="btn btn-outline" style="flex: 1; padding: 10px;" onclick="document.getElementById('file-restore').click()" title="Muat data dari file (JSON)">
                             <i class="fas fa-upload"></i> Restore (JSON)
-                            <input type="file" id="restore-file" accept=".json" style="display: none;" onchange="restoreData(event)">
-                        </label>
+                        </button>
+                        <input type="file" id="file-restore" accept=".json" style="display: none;" onchange="restoreData(event)">
+                        <button class="btn btn-danger" style="flex: 1; padding: 10px;" onclick="resetData()" title="Hapus semua data">
+                            <i class="fas fa-trash"></i> Reset Pabrik
+                        </button>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
+    <!-- MODAL: ADMIN CART (POP-UP) -->
+    <div class="modal-overlay" id="modal-admin-cart">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-shopping-cart"></i> Keranjang Kasir</h3>
+                <button class="close-btn" onclick="closeModal('modal-admin-cart')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="admin-cart-layout">
+                    <!-- Kolom Kiri: Input Pelanggan & Item -->
+                    <div class="admin-cart-col" style="flex: 1.2;">
+                        <div class="cart-customer-info">
+                            <input type="text" id="cust-name" placeholder="Nama Pelanggan">
+                            <select id="cust-table">
+                                <option value="">Pilih Meja</option>
+                            </select>
+                            <input type="text" id="cust-notes" placeholder="Catatan (Opsional)" style="grid-column: span 2;">
+                        </div>
+                        
+                        <div class="cart-items" id="admin-modal-cart-items">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    
+                    <!-- Kolom Kanan: Rincian Pembayaran -->
+                    <div class="admin-cart-col" style="flex: 0.8;">
+                        <div class="cart-summary">
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span id="summary-subtotal">Rp 0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>PPN (<span id="tax-rate-display">11</span>%)</span>
+                                <span id="summary-tax">Rp 0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Service (<span id="service-rate-display">5</span>%)</span>
+                                <span id="summary-service">Rp 0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span style="line-height: 30px;">Diskon</span>
+                                <input type="number" id="input-discount" value="0" style="padding: 4px 8px; height: 30px; text-align: right; border-radius: 6px; border: 1px solid var(--border); width: 100px;" onchange="updateCart()">
+                            </div>
+                            <div class="summary-total" style="font-size: 24px; padding-top: 15px; margin-top: 15px;">
+                                <span>Total</span>
+                                <span id="summary-total">Rp 0</span>
+                            </div>
+                            
+                            <div class="flex gap-1" style="margin-top: 20px;">
+                                <button class="btn btn-danger" style="flex:1; padding: 15px;" onclick="clearCart()">Batal</button>
+                                <button class="btn btn-primary" style="flex:2; padding: 15px;" onclick="showPaymentModal()">Bayar & Cetak</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: PAYMENT -->
-    <div class="modal-overlay" id="modal-payment">
+    <div class="modal-overlay" id="modal-payment" style="z-index: 300;">
         <div class="modal">
             <div class="modal-header">
                 <h3>Proses Pembayaran</h3>
@@ -999,11 +1000,23 @@
                     <h1 class="text-gold" id="pay-total-display">Rp 0</h1>
                 </div>
                 
-                <p class="bold" style="margin-bottom: 10px;">Metode Pembayaran</p>
+                <p class="bold" style="margin-bottom: 12px;">Metode Pembayaran</p>
                 <div class="payment-methods" id="payment-methods">
-                    <div class="pay-method active" onclick="selectPayment('Tunai', this)"><i class="fas fa-money-bill-wave"></i><br>Tunai</div>
-                    <div class="pay-method" onclick="selectPayment('QRIS', this)"><i class="fas fa-qrcode"></i><br>QRIS</div>
-                    <div class="pay-method" onclick="selectPayment('Debit/Kredit', this)"><i class="fas fa-credit-card"></i><br>Kartu</div>
+                    <div class="pay-method active" data-method="Tunai" onclick="selectPayment('Tunai', this)">
+                        <div class="check-badge"><i class="fas fa-check"></i></div>
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Tunai</span>
+                    </div>
+                    <div class="pay-method" data-method="QRIS" onclick="selectPayment('QRIS', this)">
+                        <div class="check-badge"><i class="fas fa-check"></i></div>
+                        <i class="fas fa-qrcode"></i>
+                        <span>QRIS</span>
+                    </div>
+                    <div class="pay-method" data-method="Debit/Kredit" onclick="selectPayment('Debit/Kredit', this)">
+                        <div class="check-badge"><i class="fas fa-check"></i></div>
+                        <i class="fas fa-credit-card"></i>
+                        <span>Kartu</span>
+                    </div>
                 </div>
 
                 <div id="cash-input-area">
@@ -1086,30 +1099,6 @@
         </div>
     </div>
 
-    <!-- MODAL: EDIT TRANSAKSI (RIWAYAT) -->
-    <div class="modal-overlay" id="modal-edit-trx">
-        <div class="modal">
-            <div class="modal-header">
-                <h3>Edit Informasi Transaksi</h3>
-                <button class="close-btn" onclick="closeModal('modal-edit-trx')"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body flex-col gap-1">
-                <input type="hidden" id="edit-trx-id">
-                <label>Nama Pelanggan</label>
-                <input type="text" id="edit-trx-customer">
-                <label>Meja</label>
-                <input type="text" id="edit-trx-table">
-                <label>Metode Pembayaran</label>
-                <select id="edit-trx-method">
-                    <option value="Tunai">Tunai</option>
-                    <option value="QRIS">QRIS</option>
-                    <option value="Debit/Kredit">Debit/Kredit</option>
-                </select>
-                <button class="btn btn-primary" style="margin-top: 15px;" onclick="saveEditTransaction()"><i class="fas fa-save"></i> Simpan Perubahan</button>
-            </div>
-        </div>
-    </div>
-
     <!-- MODAL: PIN ADMIN -->
     <div class="modal-overlay" id="modal-pin">
         <div class="modal" style="max-width: 350px; text-align: center;">
@@ -1154,7 +1143,7 @@
                 <button class="close-btn" onclick="closeModal('modal-customer-cart')"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body flex-col gap-1">
-                <div class="cart-items" id="cust-modal-cart-items" style="max-height: 250px; background: var(--light); border-radius: 8px; border: 1px solid var(--border);">
+                <div class="cart-items" id="cust-modal-cart-items" style="max-height: 250px; background: var(--light); border-radius: 8px; border: 1px solid var(--border); padding: 10px;">
                     <!-- Populated by JS -->
                 </div>
                 
@@ -1179,6 +1168,40 @@
 
                 <button class="btn btn-secondary" style="width: 100%; margin-top: 15px; padding: 15px; font-size: 16px;" onclick="submitCustomerOrder()">
                     <i class="fas fa-paper-plane"></i> Kirim Pesanan ke Dapur
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT TRANSAKSI (RIWAYAT) -->
+    <div class="modal-overlay" id="modal-edit-transaction">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Edit Transaksi</h3>
+                <button class="close-btn" onclick="closeModal('modal-edit-transaction')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body flex-col gap-1">
+                <input type="hidden" id="edit-trx-id">
+                <label class="bold">Nama Pelanggan</label>
+                <input type="text" id="edit-trx-customer">
+                
+                <label class="bold">Meja</label>
+                <select id="edit-trx-table">
+                    <!-- Populated dynamically -->
+                </select>
+
+                <label class="bold">Metode Pembayaran</label>
+                <select id="edit-trx-method">
+                    <option value="Tunai">Tunai</option>
+                    <option value="QRIS">QRIS</option>
+                    <option value="Debit/Kredit">Kartu (Debit/Kredit)</option>
+                </select>
+
+                <label class="bold">Catatan Pembelian</label>
+                <textarea id="edit-trx-notes" rows="2"></textarea>
+
+                <button class="btn btn-primary" style="margin-top: 15px; padding: 12px;" onclick="saveEditedTransaction()">
+                    <i class="fas fa-save"></i> Simpan Perubahan
                 </button>
             </div>
         </div>
@@ -1268,7 +1291,7 @@
             service: 5, 
             logoUrl: "", 
             gasUrl: "https://script.google.com/macros/s/AKfycby2tw5G9B3KFVLBKozeGBMcLrmEWP-twwMrV0KoqBMSViH6MNKZsgKQ0IxKEyFwYTlO/exec",
-            themeColor: "#4A3B32"
+            themeColor: "coffee" // Pilihan tema bawaan
         };
         
         // Pembuatan 50 Data Menu Secara Terstruktur
@@ -1348,6 +1371,32 @@
         let filteredTransactions = []; // Menyimpan riwayat yang sudah di filter
         let isSyncing = false; // Flag status cloud sync
 
+        // --- SISTEM TEMA WARNA ---
+        function applyThemeColors() {
+            const themeKey = appData.settings.themeColor || 'coffee';
+            const isDark = document.body.classList.contains('dark-mode');
+            
+            // Konfigurasi Preset Warna: { p: Primary, s: Secondary, dp: Dark Primary, ds: Dark Secondary }
+            const themes = {
+                coffee:   { p: '#4A3B32', s: '#D4AF37', dp: '#D4AF37', ds: '#4A3B32' },
+                ocean:    { p: '#1A5276', s: '#3498DB', dp: '#3498DB', ds: '#1A5276' },
+                matcha:   { p: '#1E8449', s: '#F1C40F', dp: '#F1C40F', ds: '#1E8449' },
+                ruby:     { p: '#922B21', s: '#E74C3C', dp: '#E74C3C', ds: '#922B21' },
+                royal:    { p: '#5B2C6F', s: '#9B59B6', dp: '#9B59B6', ds: '#5B2C6F' },
+                midnight: { p: '#2C3E50', s: '#7F8C8D', dp: '#7F8C8D', ds: '#2C3E50' }
+            };
+            
+            const t = themes[themeKey] || themes.coffee;
+            
+            if(isDark) {
+                document.documentElement.style.setProperty('--primary', t.dp);
+                document.documentElement.style.setProperty('--secondary', t.ds);
+            } else {
+                document.documentElement.style.setProperty('--primary', t.p);
+                document.documentElement.style.setProperty('--secondary', t.s);
+            }
+        }
+
         // Web Audio API Ding-Ding Sound Generator
         function playChimeNotification() {
             try {
@@ -1392,11 +1441,10 @@
             
             // Check Theme
             if(localStorage.getItem('pos_theme') === 'dark') {
-                toggleTheme(true);
-            } else {
-                applyColorVariables(appData.settings.themeColor || "#4A3B32");
+                document.body.classList.add('dark-mode');
+                document.getElementById('theme-icon').className = 'fas fa-sun';
             }
-
+            
             // Perbarui menu jika versi localStorage masih yang lama (8 item) agar mendapat 50 item.
             if(appData.menus.length < 50) {
                 appData.menus = defaultMenus;
@@ -1412,18 +1460,29 @@
                 }
             });
 
-            // Otomatis terapkan URL GAS Default jika di penyimpanan lokal sebelumnya masih kosong
-            if (!appData.settings.gasUrl) {
-                appData.settings.gasUrl = defaultSettings.gasUrl;
-                needsSave = true;
-            }
+            // Otomatis terapkan konfigurasi baru jika belum ada di data lama
+            if (!appData.settings.gasUrl) { appData.settings.gasUrl = defaultSettings.gasUrl; needsSave = true; }
+            if (!appData.settings.themeColor) { appData.settings.themeColor = defaultSettings.themeColor; needsSave = true; }
 
             if(needsSave) saveData(true); // local only during init
+            
+            // Terapkan Warna CSS Tema
+            applyThemeColors();
 
             // Sinkronisasi dengan Cloud (Google Apps Script) jika URL tersedia
             if (appData.settings.gasUrl) {
                 await loadDataFromCloud(appData.settings.gasUrl);
             }
+
+            // Set up Fullscreen Event Listener
+            document.addEventListener('fullscreenchange', () => {
+                const icon = document.getElementById('fullscreen-icon');
+                if (document.fullscreenElement) {
+                    icon.className = 'fas fa-compress';
+                } else {
+                    icon.className = 'fas fa-expand';
+                }
+            });
 
             // Populate UI
             initSettingsUI();
@@ -1498,6 +1557,7 @@
                     localStorage.setItem('pos_transactions', JSON.stringify(appData.transactions));
                     localStorage.setItem('pos_active_orders', JSON.stringify(appData.activeOrders));
 
+                    applyThemeColors();
                     updateSyncUI('Online / Tersinkronisasi', 'sync-success');
                 } else {
                     updateSyncUI('Gagal Load Cloud', 'sync-error');
@@ -1533,23 +1593,6 @@
             }
         }
 
-        // Fungsi pengaturan dinamika warna Tema
-        function applyColorVariables(color) {
-            const isDark = document.body.classList.contains('dark-mode');
-            if (isDark) {
-                document.documentElement.style.setProperty('--primary', '#D4AF37'); // Gold sebagai aksen utama di dark mode
-                document.documentElement.style.setProperty('--secondary', color);   // Warna brand custom dijadikan aksen sekunder
-            } else {
-                document.documentElement.style.setProperty('--primary', color);     // Warna brand custom
-                document.documentElement.style.setProperty('--secondary', '#D4AF37'); // Gold sebagai aksen sekunder
-            }
-        }
-
-        function previewThemeColor(color) {
-            document.getElementById('custom-theme-color').value = color;
-            applyColorVariables(color);
-        }
-
         function toggleTheme(forceDark = false) {
             const isDark = forceDark || !document.body.classList.contains('dark-mode');
             if (isDark) {
@@ -1562,13 +1605,23 @@
                 localStorage.setItem('pos_theme', 'light');
             }
             
-            // Re-apply tema warna agar posisi warna (primary/secondary) bertukar dengan benar
-            const currentColor = appData.settings.themeColor || "#4A3B32";
-            applyColorVariables(currentColor);
-            
+            applyThemeColors(); // Terapkan ulang warna tema agar matching dengan dark/light mode
             initDashboard(); // Re-render charts for theme colors
         }
 
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch((err) => {
+                    alert(`Gagal memasuki mode layar penuh: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // Modifikasi toggleSidebar agar responsif
         function toggleSidebar() {
             const sidebar = document.querySelector('.sidebar');
             sidebar.classList.toggle('hidden');
@@ -1613,16 +1666,29 @@
                 pageTitle.innerText = titles[viewId] || titles.pos;
             }
 
+            // Tampilkan atau Sembunyikan Tombol Floating Cart Admin
+            const adminCartBtn = document.getElementById('admin-cart-capsule');
+            if (adminCartBtn) {
+                if (viewId === 'pos') {
+                    adminCartBtn.style.display = 'flex';
+                } else {
+                    adminCartBtn.style.display = 'none';
+                }
+            }
+
             if(viewId === 'dashboard') initDashboard();
             if(viewId === 'active-orders') renderActiveOrders();
             if(viewId === 'tables') renderTablesGrid();
-            if(viewId === 'history') applyHistoryFilter(); // Muat ulang data saat buka tab laporan
+            if(viewId === 'history') {
+                resetHistoryCheckboxState();
+                applyHistoryFilter(); // Muat ulang data saat buka tab laporan
+            }
         }
 
         function showModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // --- 4. POS & CART LOGIC ---
+        // --- 4. POS & CART LOGIC (ADMIN MODAL CART) ---
         function initCategoryFilters() {
             const categories = ['All', ...new Set(appData.menus.map(m => m.category))];
             const container = document.getElementById('category-filters');
@@ -1631,6 +1697,7 @@
             ).join('');
         }
 
+        // Modifikasi setFilter
         function setFilter(cat, btnElement) {
             currentFilter = cat;
             document.querySelectorAll('#category-filters .filter-btn').forEach(b => b.classList.remove('active'));
@@ -1681,9 +1748,15 @@
             }
             
             updateCart();
+            
+            // Animasi pop kecil di tombol floating admin
+            const badge = document.getElementById('admin-cart-badge');
+            if (badge) {
+                badge.style.transform = 'scale(1.5)';
+                setTimeout(() => badge.style.transform = 'scale(1)', 300);
+            }
         }
 
-        // Modifikasi updateCartQty agar logic input stok bekerja dengan aman
         function updateCartQty(id, change) {
             const menu = appData.menus.find(m => m.id === id);
             const item = cart.find(c => c.id === id);
@@ -1695,6 +1768,9 @@
                 item.qty = newQty;
                 if(item.qty <= 0) cart = cart.filter(c => c.id !== id);
                 updateCart();
+                
+                // Tutup otomatis modal admin cart jika kosong
+                if(cart.length === 0) closeModal('modal-admin-cart');
             }
         }
 
@@ -1705,10 +1781,17 @@
             document.getElementById('cust-table').value = '';
             document.getElementById('input-discount').value = 0;
             updateCart();
+            closeModal('modal-admin-cart');
+        }
+
+        function showAdminCartModal() {
+            if (cart.length === 0) return alert("Keranjang belanja kasir masih kosong.");
+            showModal('modal-admin-cart');
         }
 
         function updateCart() {
-            const container = document.getElementById('cart-items');
+            // Update Inner List di Modal Admin Cart
+            const container = document.getElementById('admin-modal-cart-items');
             
             if(cart.length === 0) {
                 container.innerHTML = `<div style="text-align:center; color: var(--text-light); margin-top: 30px;">
@@ -1733,16 +1816,22 @@
             }
 
             // Calculations
+            const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             const tax = subtotal * (appData.settings.tax / 100);
             const service = subtotal * (appData.settings.service / 100);
             const discount = parseFloat(document.getElementById('input-discount').value) || 0;
             const total = subtotal + tax + service - discount;
 
+            // Update Summary di Dalam Modal
             document.getElementById('summary-subtotal').innerText = formatRp(subtotal);
             document.getElementById('summary-tax').innerText = formatRp(tax);
             document.getElementById('summary-service').innerText = formatRp(service);
             document.getElementById('summary-total').innerText = formatRp(total > 0 ? total : 0);
+            
+            // Update Tombol Floating Admin
+            document.getElementById('admin-cart-badge').innerText = totalItems;
+            document.getElementById('admin-floating-total').innerText = formatRp(total > 0 ? total : 0);
             
             // Save state for payment
             appData.currentCartTotal = total > 0 ? total : 0;
@@ -1753,24 +1842,37 @@
         }
 
         function populateTableSelect() {
-            const sel = document.getElementById('cust-table');
-            sel.innerHTML = '<option value="">Bawa Pulang (Takeaway)</option>' + 
-                appData.tables.map(t => `<option value="${t.name}">${t.name} (${t.status})</option>`).join('');
+            const sels = [document.getElementById('cust-table'), document.getElementById('cust-order-table'), document.getElementById('edit-trx-table')];
+            sels.forEach(sel => {
+                if(!sel) return;
+                const isCust = sel.id === 'cust-order-table';
+                const isEdit = sel.id === 'edit-trx-table';
+                sel.innerHTML = (isCust ? '<option value="">Pilih Meja Anda</option>' : (isEdit ? '' : '<option value="">Bawa Pulang (Takeaway)</option>')) + 
+                    appData.tables.map(t => `<option value="${t.name}">${t.name} (${t.status})</option>`).join('');
+            });
         }
 
         // --- 5. PAYMENT & CHECKOUT ---
         function showPaymentModal() {
             if(cart.length === 0) return alert("Keranjang kosong!");
+            
+            // Tutup modal keranjang dulu agar tidak menumpuk aneh
+            closeModal('modal-admin-cart');
+
             document.getElementById('pay-total-display').innerText = formatRp(appData.currentCartTotal);
             document.getElementById('pay-cash-received').value = '';
             document.getElementById('pay-change').innerText = 'Rp 0';
-            selectPayment('Tunai', document.querySelector('.pay-method'));
+            
+            // Reset active state visually to 'Tunai'
+            const defaultMethod = document.querySelector('#payment-methods .pay-method[data-method="Tunai"]');
+            if (defaultMethod) selectPayment('Tunai', defaultMethod);
+            
             showModal('modal-payment');
         }
 
         function selectPayment(method, element) {
             selectedPayment = method;
-            document.querySelectorAll('.pay-method').forEach(e => e.classList.remove('active'));
+            document.querySelectorAll('#payment-methods .pay-method').forEach(e => e.classList.remove('active'));
             element.classList.add('active');
             
             const cashArea = document.getElementById('cash-input-area');
@@ -2060,22 +2162,14 @@
             }
         }
 
-        // --- 8. HISTORY & REPORTING LOGIC ---
-        function parseDateString(dateStr) {
-            // Convert "1/6/2026, 01.06.00" -> JS Date obj. (Slightly robust fallback if no timestamp)
-            try {
-                const parts = dateStr.split(', ')[0].split('/');
-                return new Date(parts[2], parts[1] - 1, parts[0]).getTime();
-            } catch(e) { return 0; }
-        }
-
+        // --- 8. HISTORY, EDIT, DELETE & BULK CHECKLIST LOGIC ---
         function setQuickDateFilter(type) {
             const today = new Date();
             let startDate = new Date();
             let endDate = new Date();
             
             document.querySelectorAll('.filter-history-group .btn-outline').forEach(b => b.style.fontWeight = 'normal');
-            event.currentTarget.style.fontWeight = 'bold';
+            if (event) event.currentTarget.style.fontWeight = 'bold';
 
             if(type === 'today') {
                 document.getElementById('filter-start-date').value = today.toISOString().split('T')[0];
@@ -2094,6 +2188,7 @@
                 document.getElementById('filter-start-date').value = '';
                 document.getElementById('filter-end-date').value = '';
             }
+            resetHistoryCheckboxState();
             applyHistoryFilter();
         }
 
@@ -2131,8 +2226,12 @@
             // Render ke tabel riwayat (hanya tampil max 100 di layar web agar tidak berat)
             const tbody = document.getElementById('history-table-body');
             tbody.innerHTML = filteredTransactions.slice(0, 100).map(t => `
-                <tr>
-                    <td><input type="checkbox" class="cb-history" value="${t.id}" onchange="checkHistorySelection()"></td>
+                <tr id="trx-row-${t.id}">
+                    <td style="text-align: center;">
+                        <div class="checkbox-container">
+                            <input type="checkbox" class="custom-checkbox history-checkbox" data-id="${t.id}" onchange="updateHistoryCheckboxState()">
+                        </div>
+                    </td>
                     <td class="bold">${t.id}</td>
                     <td>${t.date}</td>
                     <td>${t.customer}</td>
@@ -2140,9 +2239,11 @@
                     <td><span class="badge badge-success">${t.method}</span></td>
                     <td class="bold text-gold">${formatRp(t.total)}</td>
                     <td>
-                        <button class="btn btn-outline btn-icon" onclick="editTransaction('${t.id}')" title="Edit Transaksi"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-outline btn-icon" style="color: var(--danger); border-color: var(--danger);" onclick="deleteTransaction('${t.id}')" title="Hapus Transaksi"><i class="fas fa-trash"></i></button>
-                        <button class="btn btn-outline btn-icon" onclick="reprint('${t.id}')" title="Cetak Struk Ulang"><i class="fas fa-receipt"></i></button>
+                        <div class="flex gap-1">
+                            <button class="btn btn-outline btn-icon" onclick="reprint('${t.id}')" title="Cetak Struk Ulang"><i class="fas fa-receipt"></i></button>
+                            <button class="btn btn-outline btn-icon" style="border-color: var(--primary); color: var(--primary);" onclick="showEditTransactionModal('${t.id}')" title="Edit Transaksi"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-outline btn-icon" style="border-color: var(--danger); color: var(--danger);" onclick="deleteSingleTransaction('${t.id}')" title="Hapus Transaksi"><i class="fas fa-trash-alt"></i></button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
@@ -2150,11 +2251,132 @@
             if(filteredTransactions.length === 0) {
                  tbody.innerHTML = `<tr><td colspan="8" class="text-center">Tidak ada transaksi pada periode ini.</td></tr>`;
             }
+            updateHistoryCheckboxState();
+        }
 
-            // Reset state checkbox all
-            const cbAll = document.getElementById('cb-all-history');
-            if(cbAll) cbAll.checked = false;
-            checkHistorySelection();
+        // Checklist Checklist masal
+        function toggleAllHistoryCheckboxes(masterCheckbox) {
+            const checkBoxes = document.querySelectorAll('.history-checkbox');
+            checkBoxes.forEach(cb => {
+                cb.checked = masterCheckbox.checked;
+            });
+            updateHistoryCheckboxState();
+        }
+
+        function updateHistoryCheckboxState() {
+            const checkBoxes = document.querySelectorAll('.history-checkbox');
+            const checkedCount = Array.from(checkBoxes).filter(cb => cb.checked).length;
+            const bulkBar = document.getElementById('bulk-actions-area');
+            const countLabel = document.getElementById('checked-count');
+            const checkAllBox = document.getElementById('check-all-history');
+
+            if (checkedCount > 0) {
+                bulkBar.style.display = 'flex';
+                countLabel.innerText = checkedCount;
+            } else {
+                bulkBar.style.display = 'none';
+            }
+
+            // Atur status check-all checkbox utama
+            if (checkBoxes.length > 0 && checkedCount === checkBoxes.length) {
+                checkAllBox.checked = true;
+            } else {
+                checkAllBox.checked = false;
+            }
+        }
+
+        function resetHistoryCheckboxState() {
+            const checkAllBox = document.getElementById('check-all-history');
+            if (checkAllBox) checkAllBox.checked = false;
+            const bulkBar = document.getElementById('bulk-actions-area');
+            if (bulkBar) bulkBar.style.display = 'none';
+        }
+
+        // Hapus banyak transaksi
+        function deleteSelectedTransactions() {
+            const checkedBoxes = document.querySelectorAll('.history-checkbox:checked');
+            const idsToDelete = Array.from(checkedBoxes).map(cb => cb.getAttribute('data-id'));
+
+            if (idsToDelete.length === 0) return;
+
+            if (confirm(`Apakah Anda yakin ingin menghapus secara masal ${idsToDelete.length} transaksi terpilih? Tindakan ini tidak dapat dibatalkan.`)) {
+                appData.transactions = appData.transactions.filter(t => !idsToDelete.includes(t.id));
+                saveData();
+                resetHistoryCheckboxState();
+                applyHistoryFilter();
+                initDashboard();
+                alert("Transaksi terpilih berhasil dihapus!");
+            }
+        }
+
+        // Hapus satu transaksi
+        function deleteSingleTransaction(id) {
+            if (confirm(`Apakah Anda yakin ingin menghapus transaksi ${id}? Tindakan ini tidak dapat dibatalkan.`)) {
+                appData.transactions = appData.transactions.filter(t => t.id !== id);
+                saveData();
+                applyHistoryFilter();
+                initDashboard();
+                alert("Transaksi berhasil dihapus!");
+            }
+        }
+
+        // Edit satu transaksi (Modal & Save)
+        function showEditTransactionModal(id) {
+            const t = appData.transactions.find(x => x.id === id);
+            if (!t) return;
+
+            document.getElementById('edit-trx-id').value = t.id;
+            document.getElementById('edit-trx-customer').value = t.customer;
+            document.getElementById('edit-trx-notes').value = t.notes || '';
+            document.getElementById('edit-trx-method').value = t.method;
+
+            // Render opsi meja dan pilih meja yang sesuai
+            populateTableSelect();
+            document.getElementById('edit-trx-table').value = t.table;
+
+            showModal('modal-edit-transaction');
+        }
+
+        function saveEditedTransaction() {
+            const id = document.getElementById('edit-trx-id').value;
+            const customer = document.getElementById('edit-trx-customer').value.trim();
+            const table = document.getElementById('edit-trx-table').value;
+            const method = document.getElementById('edit-trx-method').value;
+            const notes = document.getElementById('edit-trx-notes').value.trim();
+
+            if (!customer) return alert("Mohon masukkan nama pelanggan.");
+
+            const tIndex = appData.transactions.findIndex(x => x.id === id);
+            if (tIndex > -1) {
+                const oldTable = appData.transactions[tIndex].table;
+
+                // Update data transaksi
+                appData.transactions[tIndex].customer = customer;
+                appData.transactions[tIndex].table = table;
+                appData.transactions[tIndex].method = method;
+                appData.transactions[tIndex].notes = notes;
+
+                // Update status meja jika meja berubah
+                if (oldTable !== table) {
+                    // Kembalikan meja lama ke kosong jika sebelumnya terisi
+                    if (oldTable !== 'Takeaway') {
+                        const oldT = appData.tables.find(x => x.name === oldTable);
+                        if (oldT) oldT.status = 'Kosong';
+                    }
+                    // Atur meja baru ke terisi
+                    if (table !== 'Takeaway') {
+                        const newT = appData.tables.find(x => x.name === table);
+                        if (newT) newT.status = 'Terisi';
+                    }
+                }
+
+                saveData();
+                applyHistoryFilter();
+                renderTablesGrid();
+                initDashboard();
+                closeModal('modal-edit-transaction');
+                alert("Perubahan transaksi berhasil disimpan!");
+            }
         }
 
         function printReport() {
@@ -2209,7 +2431,11 @@
             document.getElementById('dash-items').innerText = totalItems;
             document.getElementById('dash-tables').innerText = `${activeTables} / ${appData.tables.length}`;
 
-            // Theme colors for charts
+            // Mengambil CSS Variable Aktual Berdasarkan Tema Aktif
+            const rootStyle = getComputedStyle(document.documentElement);
+            let secondaryColor = rootStyle.getPropertyValue('--secondary').trim();
+            if (!secondaryColor) secondaryColor = '#D4AF37';
+
             const isDark = document.body.classList.contains('dark-mode');
             const textColor = isDark ? '#F9F6F0' : '#333';
             const gridColor = isDark ? '#333' : '#E0DCD3';
@@ -2226,8 +2452,8 @@
                     datasets: [{
                         label: 'Pendapatan (Jutaan)',
                         data: [2.5, 3.2, 2.8, 4.1, 5.5, 8.2, 7.5], // Dummy data
-                        borderColor: '#D4AF37',
-                        backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                        borderColor: secondaryColor,
+                        backgroundColor: 'rgba(212, 175, 55, 0.1)',
                         fill: true,
                         tension: 0.4
                     }]
@@ -2250,7 +2476,7 @@
                     labels: ['Tunai', 'QRIS', 'Kartu'],
                     datasets: [{
                         data: [payStats['Tunai'] || 10, payStats['QRIS'] || 15, payStats['Debit/Kredit'] || 5], // Add dummy if 0 for visual
-                        backgroundColor: ['#4A3B32', '#D4AF37', '#E74C3C'],
+                        backgroundColor: ['#4A3B32', secondaryColor, '#E74C3C'],
                         borderWidth: 0
                     }]
                 },
@@ -2260,14 +2486,13 @@
 
         // --- 10. SETTINGS ---
         function initSettingsUI() {
+            document.getElementById('set-theme-color').value = appData.settings.themeColor || 'coffee';
             document.getElementById('set-gas-url').value = appData.settings.gasUrl || '';
             document.getElementById('set-logo').value = appData.settings.logoUrl || '';
             document.getElementById('set-name').value = appData.settings.name;
             document.getElementById('set-address').value = appData.settings.address;
             document.getElementById('set-tax').value = appData.settings.tax;
             document.getElementById('set-service').value = appData.settings.service;
-            
-            document.getElementById('custom-theme-color').value = appData.settings.themeColor || "#4A3B32";
             
             document.getElementById('tax-rate-display').innerText = appData.settings.tax;
             document.getElementById('service-rate-display').innerText = appData.settings.service;
@@ -2295,6 +2520,7 @@
         }
 
         function saveSettings() {
+            appData.settings.themeColor = document.getElementById('set-theme-color').value;
             appData.settings.gasUrl = document.getElementById('set-gas-url').value.trim();
             appData.settings.logoUrl = document.getElementById('set-logo').value.trim();
             appData.settings.name = document.getElementById('set-name').value;
@@ -2302,12 +2528,12 @@
             appData.settings.tax = parseFloat(document.getElementById('set-tax').value) || 0;
             appData.settings.service = parseFloat(document.getElementById('set-service').value) || 0;
             
-            // Simpan Warna Tema
-            appData.settings.themeColor = document.getElementById('custom-theme-color').value;
-            
             saveData();
             initSettingsUI();
             updateCart(); // re-calc cart
+            applyThemeColors(); // Terapkan tema warna
+            initDashboard(); // Render ulang warna di chart
+            
             alert("Pengaturan berhasil disimpan!");
         }
 
@@ -2316,6 +2542,53 @@
                 localStorage.clear();
                 location.reload();
             }
+        }
+
+        function backupData() {
+            // Ubah seluruh objek aplikasi (appData) menjadi string format JSON
+            const dataStr = JSON.stringify(appData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            
+            // Buat tag <a> sementara untuk memicu download otomatis
+            const a = document.createElement('a');
+            const date = new Date().toISOString().split('T')[0]; // Mendapatkan tanggal YYYY-MM-DD
+            a.download = `CafePOS_Backup_${date}.json`;
+            a.href = url;
+            a.click();
+            
+            // Bersihkan memori blob
+            URL.revokeObjectURL(url);
+        }
+
+        function restoreData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    // Validasi file JSON agar tidak asal upload
+                    if (importedData && importedData.settings && importedData.menus && importedData.transactions) {
+                        if(confirm("PERINGATAN: Seluruh data saat ini akan DITIMPA dengan data dari file backup. Anda yakin?")) {
+                            appData = importedData;
+                            saveData(true); // Simpan ke local storage
+                            alert("Data berhasil direstore! Aplikasi akan dimuat ulang.");
+                            location.reload(); // Muat ulang layar untuk merender data baru
+                        }
+                    } else {
+                        alert("Format file JSON tidak valid. Pastikan Anda menggunakan file backup dari CafePOS.");
+                    }
+                } catch (err) {
+                    alert("Terjadi kesalahan saat membaca file backup: " + err.message);
+                }
+                
+                // Reset input agar bisa memilih file yang sama lagi jika dibatalkan
+                event.target.value = '';
+            };
+            reader.readAsText(file);
         }
 
         // --- 11. CUSTOMER SELF-ORDERING LOGIC ---
@@ -2330,8 +2603,10 @@
             
             // Populate table select in customer modal
             const sel = document.getElementById('cust-order-table');
-            sel.innerHTML = '<option value="">Pilih Meja Anda</option>' + 
-                appData.tables.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+            if (sel) {
+                sel.innerHTML = '<option value="">Pilih Meja Anda</option>' + 
+                    appData.tables.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+            }
         }
 
         function exitCustomerMode() {
@@ -2551,29 +2826,6 @@
         }
 
         // --- 12. ACTIVE ORDERS (ADMIN) LOGIC ---
-        async function refreshActiveOrders() {
-            const btn = document.getElementById('btn-refresh-orders');
-            if(btn) {
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
-            }
-            
-            // Coba tarik data terbaru dari cloud jika URL tersedia
-            if (appData.settings.gasUrl) {
-                await loadDataFromCloud(appData.settings.gasUrl);
-            } else {
-                // Delay buatan untuk mode lokal agar terlihat efek refresh
-                await new Promise(resolve => setTimeout(resolve, 500));
-            }
-            
-            renderActiveOrders();
-            
-            if(btn) {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
-            }
-        }
-
         function renderActiveOrders() {
             const container = document.getElementById('active-orders-grid');
             
@@ -2626,9 +2878,6 @@
 
             // Muat pesanan pelanggan ke keranjang utama POS
             cart = [...order.items];
-            document.getElementById('cust-name').value = order.customer;
-            document.getElementById('cust-table').value = order.table;
-            document.getElementById('cust-notes').value = order.notes || '';
             
             // Hapus dari antrean active orders
             appData.activeOrders = appData.activeOrders.filter(o => o.id !== orderId);
@@ -2638,107 +2887,18 @@
             // Pindah ke Kasir (POS)
             switchView('pos');
             updateCart();
+
+            // Inject nama & meja ke dalam modal kasir setelah switch view
+            setTimeout(() => {
+                document.getElementById('cust-name').value = order.customer;
+                document.getElementById('edit-trx-table').value = order.table;
+                document.getElementById('cust-notes').value = order.notes || '';
+                // Buka otomatis keranjangnya biar kasir langsung memproses
+                showAdminCartModal();
+            }, 100);
             
             // Highlight ke kasir
-            alert(`Pesanan Meja ${order.table} (${order.customer}) berhasil dimuat ke Kasir.\nSilakan proses pembayaran.`);
-        }
-
-        // --- 13. FITUR TAMBAHAN (BACKUP, RESTORE, & HISTORY ACTIONS) ---
-        
-        function backupData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
-            const dlAnchorElem = document.createElement('a');
-            dlAnchorElem.setAttribute("href", dataStr);
-            dlAnchorElem.setAttribute("download", "CafePOS_Backup_" + new Date().getTime() + ".json");
-            document.body.appendChild(dlAnchorElem);
-            dlAnchorElem.click();
-            document.body.removeChild(dlAnchorElem);
-        }
-
-        function restoreData(event) {
-            const file = event.target.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const parsed = JSON.parse(e.target.result);
-                    if(parsed.settings && parsed.menus && parsed.tables) {
-                        if(confirm("PERINGATAN! Data aplikasi saat ini akan ditimpa secara permanen dengan data dari file backup. Lanjutkan?")) {
-                            appData = parsed;
-                            saveData(true);
-                            alert("Restore berhasil! Aplikasi akan dimuat ulang.");
-                            location.reload();
-                        }
-                    } else {
-                        alert("Format JSON tidak valid atau rusak untuk aplikasi ini.");
-                    }
-                } catch(err) {
-                    alert("Gagal membaca file JSON.");
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = ''; // Reset input
-        }
-
-        function toggleAllHistory(el) {
-            const checkboxes = document.querySelectorAll('.cb-history');
-            checkboxes.forEach(cb => cb.checked = el.checked);
-            checkHistorySelection();
-        }
-
-        function checkHistorySelection() {
-            const selected = document.querySelectorAll('.cb-history:checked').length;
-            const btnDelete = document.getElementById('btn-bulk-delete');
-            if(selected > 0) {
-                btnDelete.style.display = 'inline-flex';
-                btnDelete.innerHTML = `<i class="fas fa-trash"></i> Hapus Terpilih (${selected})`;
-            } else {
-                btnDelete.style.display = 'none';
-            }
-        }
-
-        function deleteSelectedHistory() {
-            const selectedNodes = document.querySelectorAll('.cb-history:checked');
-            if(selectedNodes.length === 0) return;
-            if(confirm(`Apakah Anda yakin ingin menghapus ${selectedNodes.length} transaksi terpilih secara permanen?`)) {
-                const idsToDelete = Array.from(selectedNodes).map(cb => cb.value);
-                appData.transactions = appData.transactions.filter(t => !idsToDelete.includes(t.id));
-                saveData();
-                applyHistoryFilter();
-                initDashboard();
-            }
-        }
-
-        function deleteTransaction(id) {
-            if(confirm("Apakah Anda yakin ingin menghapus transaksi ini secara permanen?")) {
-                appData.transactions = appData.transactions.filter(t => t.id !== id);
-                saveData();
-                applyHistoryFilter();
-                initDashboard();
-            }
-        }
-
-        function editTransaction(id) {
-            const t = appData.transactions.find(x => x.id === id);
-            if(!t) return;
-            document.getElementById('edit-trx-id').value = t.id;
-            document.getElementById('edit-trx-customer').value = t.customer;
-            document.getElementById('edit-trx-table').value = t.table;
-            document.getElementById('edit-trx-method').value = t.method;
-            showModal('modal-edit-trx');
-        }
-
-        function saveEditTransaction() {
-            const id = document.getElementById('edit-trx-id').value;
-            const t = appData.transactions.find(x => x.id === id);
-            if(t) {
-                t.customer = document.getElementById('edit-trx-customer').value;
-                t.table = document.getElementById('edit-trx-table').value;
-                t.method = document.getElementById('edit-trx-method').value;
-                saveData();
-                applyHistoryFilter();
-                closeModal('modal-edit-trx');
-            }
+            alert(`Pesanan Meja ${order.table} (${order.customer}) berhasil dimuat ke Keranjang Kasir.`);
         }
     </script>
 </body>
