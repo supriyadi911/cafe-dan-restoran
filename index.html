@@ -525,13 +525,36 @@
         #print-receipt, #print-report { display: none; }
 
         @media print {
+            @page {
+                margin: 0; /* Menghilangkan margin bawaan browser agar pas di printer termal */
+                size: auto; /* Mengikuti ukuran kertas printer (58mm/80mm) */
+            }
             body * { visibility: hidden; }
-            body { background: white; }
+            body { background: white; margin: 0; padding: 0; }
+            
             .print-receipt-mode #print-receipt, .print-receipt-mode #print-receipt * { visibility: visible; }
-            .print-receipt-mode #print-receipt { display: block; position: absolute; left: 0; top: 0; width: 100%; max-width: 80mm; padding: 10px; background: white; color: black; font-family: monospace; }
+            .print-receipt-mode #print-receipt { 
+                display: block; 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 100%; 
+                max-width: 100%; /* Membiarkan lebar fleksibel menyesuaikan kertas termal */
+                padding: 5mm; 
+                background: white; 
+                color: black; 
+                font-family: 'Courier New', Courier, monospace; /* Font standar printer kasir */
+                font-size: 12px; 
+                line-height: 1.2;
+            }
             .print-center { text-align: center; }
-            .print-divider { border-bottom: 1px dashed black; margin: 10px 0; }
-            .print-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+            .print-divider { border-bottom: 1px dashed black; margin: 5px 0; }
+            .print-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 2px; }
+            
+            /* Penyesuaian format list item untuk printer termal */
+            .print-item { margin-bottom: 4px; }
+            .print-item-name { display: block; font-size: 12px; font-weight: bold; text-align: left; word-wrap: break-word; }
+            .print-item-details { display: flex; justify-content: space-between; font-size: 12px; margin-top: 2px; }
             
             .print-report-mode #print-report, .print-report-mode #print-report * { visibility: visible; }
             .print-report-mode #print-report { display: block; position: absolute; left: 0; top: 0; width: 100%; background: white; color: black; padding: 20px; font-family: sans-serif; }
@@ -1965,8 +1988,15 @@
             document.getElementById('receipt-cust').innerText = trx.customer;
             document.getElementById('receipt-table').innerText = trx.table;
             
+            // Format item agar pas dengan kertas 58mm/80mm (Nama di baris pertama, Qty & Subtotal di baris kedua)
             document.getElementById('receipt-items').innerHTML = trx.items.map(item => `
-                <div class="print-row"><span>${item.name} x${item.qty}</span><span>${formatRp(item.price * item.qty)}</span></div>
+                <div class="print-item">
+                    <div class="print-item-name">${item.name}</div>
+                    <div class="print-item-details">
+                        <span>${item.qty} x ${formatRp(item.price)}</span>
+                        <span>${formatRp(item.price * item.qty)}</span>
+                    </div>
+                </div>
             `).join('');
 
             document.getElementById('receipt-sub').innerText = formatRp(trx.subtotal);
